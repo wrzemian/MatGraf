@@ -33,5 +33,10 @@ int main() {
     std::cout<<"wektor prostopadly do podanych: ["<<perp.getX()<<","<<perp.getY()<<","<<perp.getZ()<<"]";
     std::cout<<"\nv7 dot perp = "<<v7.dot(perp)<<"\nv8 dot perp = "<<v8.dot(perp);
     ////////////////////////////////////////////////////////////////////
+    ////normalizacja wektora////////////////////////////////////////////
+    Vector normalised = perp.normalise();
+    std::cout<<"\nwektor znormalizowany: ["<<normalised.getX()<<","<<normalised.getY()<<","<<normalised.getZ()<<"]";
+    std::cout<<"\ndlugosc wektora znormalizowanego = "<<normalised.getLen();
+    ////////////////////////////////////////////////////////////////////
     return 0;
 }

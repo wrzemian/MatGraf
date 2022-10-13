@@ -21,6 +21,7 @@ public:
     Vector multpily(double a);
     double getLen();
     double findAngle(Vector vec);
+    Vector normalise();
 
     double getX() const;
 

@@ -38,11 +38,16 @@ Vector Vector::multpily(double a) {
 }
 
 double Vector::getLen() {
-    return sqrt(x*x+y*y);
+    return sqrt(x*x+y*y+z*z);
 }
 
 double Vector::findAngle(Vector vec) {
     return acos(this->dot(vec)/(this->getLen()*vec.getLen()))*180/M_PI;
+}
+
+Vector Vector::normalise() {
+    double temp = this->getLen();
+    return {x/temp, y/temp, z/temp};
 }
 
 double Vector::getX() const {
