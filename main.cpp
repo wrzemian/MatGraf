@@ -43,7 +43,7 @@ int main() {
     printf("%s dot %s = %f \n", v8.str().c_str(), perp.str().c_str(), v8.dot(perp));
     printf("\n");
 
-    ////normalizacja wektora////////////////////////////////////////////
+    ////normalizacja wektora
     Vector normalised = perp.normalise();
     printf("wektor %s znormalizowany: %s \n", perp.str().c_str(), normalised.str().c_str());
     printf("dlugosc wektora znormalizowanego: %f \n", normalised.length());
