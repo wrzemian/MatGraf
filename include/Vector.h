@@ -14,8 +14,8 @@ private:
 public:
     Vector(double x, double y, double z);
     virtual ~Vector();
-    Vector add(const Vector& vec);
-    Vector sub(const Vector& vec);
+    void add(const Vector& vec);
+    void sub(const Vector& vec);
     double dot(const Vector& vec);
     Vector cross(const Vector& vec);
     Vector multpily(double a);

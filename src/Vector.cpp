@@ -10,12 +10,16 @@ Vector::~Vector() {
 
 }
 
-Vector Vector::add(const Vector& vec) {
-    return {x+vec.x, y+vec.y, z+vec.z};
+void Vector::add(const Vector& vec) {
+    x+vec.x;
+    y+vec.y;
+    z+vec.z;
 }
 
-Vector Vector::sub(const Vector& vec) {
-    return {x-vec.x, y-vec.y, z-vec.z};
+void Vector::sub(const Vector& vec) {
+    x-vec.x;
+    y-vec.y;
+    z-vec.z;
 }
 
 double Vector::dot(const Vector& vec) {
@@ -29,5 +33,5 @@ Vector Vector::cross(const Vector& vec) {
 }
 
 Vector Vector::multpily(double a) {
-
+    return {a*x,a*y,a*z};
 }
