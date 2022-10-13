@@ -19,6 +19,12 @@ public:
     double dot(const Vector& vec);
     Vector cross(const Vector& vec);
     Vector multpily(double a);
+
+    double getX() const;
+
+    double getY() const;
+
+    double getZ() const;
 };
 
 
