@@ -21,10 +21,17 @@ int main() {
         std::cout<<"przemiennosc dodawania nie istnieje";
     }
     ////////////////////////////////////////////////////////////////////
-    ////obliczanie kąta///////////////////////////////////////
+    ////obliczanie kąta/////////////////////////////////////////////////
     Vector v5 = Vector(0,3,0);
     Vector v6 = Vector(5,5,0);
-    std::cout<<"kat miedzy wektorami (w stopniach): "<<v5.findAngle(v6);
+    std::cout<<"kat miedzy wektorami (w stopniach): "<<v5.findAngle(v6)<<"\n";
+    ////////////////////////////////////////////////////////////////////
+    ////wektor prostopadły//////////////////////////////////////////////
+    Vector v7 = Vector(4,5,1);
+    Vector v8 = Vector(4,1,3);
+    Vector perp = v7.cross(v8);
+    std::cout<<"wektor prostopadly do podanych: ["<<perp.getX()<<","<<perp.getY()<<","<<perp.getZ()<<"]";
+    std::cout<<"\nv7 dot perp = "<<v7.dot(perp)<<"\nv8 dot perp = "<<v8.dot(perp);
     ////////////////////////////////////////////////////////////////////
     return 0;
 }
