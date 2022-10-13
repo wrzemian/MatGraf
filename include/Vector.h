@@ -19,6 +19,8 @@ public:
     double dot(const Vector& vec);
     Vector cross(const Vector& vec);
     Vector multpily(double a);
+    double getLen();
+    double findAngle(Vector vec);
 
     double getX() const;
 

@@ -21,6 +21,10 @@ int main() {
         std::cout<<"przemiennosc dodawania nie istnieje";
     }
     ////////////////////////////////////////////////////////////////////
-
+    ////obliczanie kąta///////////////////////////////////////
+    Vector v5 = Vector(0,3,0);
+    Vector v6 = Vector(5,5,0);
+    std::cout<<"kat miedzy wektorami (w stopniach): "<<v5.findAngle(v6);
+    ////////////////////////////////////////////////////////////////////
     return 0;
 }
