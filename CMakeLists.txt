@@ -3,4 +3,4 @@ project(MatGraf)
 
 set(CMAKE_CXX_STANDARD 14)
 
-add_executable(MatGraf main.cpp)
+add_executable(MatGraf main.cpp src/Vector.cpp include/Vector.h)
