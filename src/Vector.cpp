@@ -4,52 +4,59 @@
 
 #include "../include/Vector.h"
 #include <cmath>
-#include <stdio.h>
 #include <string>
 #include <sstream>
 
 Vector::Vector(double x, double y, double z) : x(x), y(y), z(z) {}
 
-Vector::~Vector() {}
+Vector::~Vector() = default;
 
 
 void Vector::add(const Vector& vec) {
-    x+=vec.x;
-    y+=vec.y;
-    z+=vec.z;
+    x += vec.x;
+    y += vec.y;
+    z += vec.z;
 }
 
 void Vector::sub(const Vector& vec) {
-    x-=vec.x;
-    y-=vec.y;
-    z-=vec.z;
+    x -= vec.x;
+    y -= vec.y;
+    z -= vec.z;
 }
 
-double Vector::dot(const Vector& vec) {
-    return x*vec.x + y*vec.y + z*vec.z;
+double Vector::dot(const Vector& vec) const {
+    return x * vec.x
+         + y * vec.y
+         + z * vec.z;
 }
 
-Vector Vector::cross(const Vector& vec) {
-    return {y*vec.z - z*vec.y,
-            z*vec.x - x*vec.z,
-            x*vec.y - y*vec.x};
+Vector Vector::cross(const Vector& vec) const {
+    return {y * vec.z - z * vec.y,
+            z * vec.x - x * vec.z,
+            x * vec.y - y * vec.x};
 }
 
-Vector Vector::multpily(double a) {
-    return {a*x,a*y,a*z};
+Vector Vector::multpily(double a) const {
+    return {a * x,
+            a * y,
+            a * z};
 }
 
-double Vector::length() {
-    return sqrt(x*x + y*y + z*z);
+double Vector::length() const {
+    return sqrt(x * x
+                + y * y
+                + z * z);
 }
 
-double Vector::findAngle(Vector vec) {
-    return acos(this->dot(vec)/(this->length() * vec.length())) * 180 / M_PI;
+double Vector::findAngle(const Vector& vec) const {
+    return acos(this->dot(vec) / (this->length() * vec.length())) * 180 / M_PI;
 }
 
-Vector Vector::normalise() {
+Vector Vector::normalise() const {
     double temp = this->length();
-    return {x/temp, y/temp, z/temp};
+    return {x / temp,
+            y / temp,
+            z / temp};
 }
 
 double Vector::getX() const {
@@ -64,13 +71,13 @@ double Vector::getZ() const {
     return z;
 }
 
-std::string Vector::str() {
+std::string Vector::str() const {
     std::stringstream ss;
     ss << "[" << x << ", " << y << ", " << z << "]";
     return ss.str();
 }
 
-bool Vector::equals(const Vector& vec) {
+bool Vector::equals(const Vector& vec) const {
     if (x != vec.x || y != vec.y || z != vec.z) {
         return false;
     } else {
@@ -78,8 +85,8 @@ bool Vector::equals(const Vector& vec) {
     }
 }
 
-Vector Vector::copy() {
-    return Vector(x, y, z);
+Vector Vector::copy() const {
+    return {x, y, z};
 }
 
 

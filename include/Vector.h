@@ -18,19 +18,19 @@ public:
     Vector(double x, double y, double z);
     virtual ~Vector();
 
-    std::string str();
-    Vector copy();
+    std::string str() const;
+    Vector copy() const;
 
     void add(const Vector& vec);
     void sub(const Vector& vec);
-    double dot(const Vector& vec);
-    Vector cross(const Vector& vec);
-    Vector multpily(double a);
+    double dot(const Vector& vec) const;
+    Vector cross(const Vector& vec) const;
+    Vector multpily(double a) const;
 
-    double length();
-    double findAngle(Vector vec);
-    Vector normalise();
-    bool equals(const Vector& vec);
+    double length() const;
+    double findAngle(const Vector& vec) const;
+    Vector normalise() const;
+    bool equals(const Vector& vec) const;
 
     double getX() const;
     double getY() const;
