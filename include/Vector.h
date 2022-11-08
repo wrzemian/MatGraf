@@ -13,9 +13,11 @@ private:
     double x;
     double y;
     double z;
+    double w;
 
 public:
     Vector(double x, double y, double z);
+    Vector(double x, double y, double z, double w);
     virtual ~Vector();
 
     std::string str() const;
@@ -35,6 +37,7 @@ public:
     double getX() const;
     double getY() const;
     double getZ() const;
+    double getW() const;
 };
 
 

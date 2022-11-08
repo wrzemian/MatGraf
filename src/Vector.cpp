@@ -7,7 +7,8 @@
 #include <string>
 #include <sstream>
 
-Vector::Vector(double x, double y, double z) : x(x), y(y), z(z) {}
+Vector::Vector(double x, double y, double z) : x(x), y(y), z(z), w(0) {}
+Vector::Vector(double x, double y, double z, double w) : x(x), y(y), z(z), w(w) {}
 
 Vector::~Vector() = default;
 
@@ -16,36 +17,43 @@ void Vector::add(const Vector& vec) {
     x += vec.x;
     y += vec.y;
     z += vec.z;
+    w += vec.w;
 }
 
 void Vector::sub(const Vector& vec) {
     x -= vec.x;
     y -= vec.y;
     z -= vec.z;
+    w -= vec.w;
 }
 
 double Vector::dot(const Vector& vec) const {
     return x * vec.x
          + y * vec.y
-         + z * vec.z;
+         + z * vec.z
+         + w * vec.w;
 }
 
 Vector Vector::cross(const Vector& vec) const {
+    if( w == 0 && vec.getW() == 0)
     return {y * vec.z - z * vec.y,
             z * vec.x - x * vec.z,
-            x * vec.y - y * vec.x};
+            x * vec.y - y * vec.x,
+            0};
 }
 
 Vector Vector::multpily(double a) const {
     return {a * x,
             a * y,
-            a * z};
+            a * z,
+            a * w};
 }
 
 double Vector::length() const {
     return sqrt(x * x
                 + y * y
-                + z * z);
+                + z * z
+                + w * w);
 }
 
 double Vector::findAngle(const Vector& vec) const {
@@ -56,7 +64,8 @@ Vector Vector::normalise() const {
     double temp = this->length();
     return {x / temp,
             y / temp,
-            z / temp};
+            z / temp,
+            w / temp};
 }
 
 double Vector::getX() const {
@@ -71,14 +80,20 @@ double Vector::getZ() const {
     return z;
 }
 
+double Vector::getW() const {
+    return w;
+}
 std::string Vector::str() const {
     std::stringstream ss;
-    ss << "[" << x << ", " << y << ", " << z << "]";
+    if(w!=0)
+        ss << "[" << x << ", " << y << ", " << z << ", " << w << "]";
+    else
+        ss << "[" << x << ", " << y << ", " << z << "]";
     return ss.str();
 }
 
 bool Vector::equals(const Vector& vec) const {
-    if (x != vec.x || y != vec.y || z != vec.z) {
+    if (x != vec.x || y != vec.y || z != vec.z || w != vec.w) {
         return false;
     } else {
         return true;
@@ -86,7 +101,7 @@ bool Vector::equals(const Vector& vec) const {
 }
 
 Vector Vector::copy() const {
-    return {x, y, z};
+    return {x, y, z, w};
 }
 
 
