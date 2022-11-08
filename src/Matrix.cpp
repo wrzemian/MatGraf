@@ -2,7 +2,7 @@
 // Created by wrzos on 08.11.2022.
 //
 
-#include "Matrix.h"
+#include "../include/Matrix.h"
 
 
 Matrix::Matrix(double *inValues) {
