@@ -5,7 +5,7 @@
 #include "../include/Matrix.h"
 
 
-Matrix::Matrix(double *inValues) {
+Matrix::Matrix(const double *inValues) {
     for(int i = 0; i < 4; i++){
         for(int j = 0; j < 4; j++){
             entries[i][j] = inValues[i*4 + j];
@@ -58,8 +58,33 @@ Matrix Matrix::transpose() {
         }
     return Matrix(temp);
 }
+Matrix Matrix::inverse() {
+    double det = this->getDeterminant();
+    if (det != 0) {
+        // Find adjoint
+        double adj[4][4];
+        double A[4][4];
+        double inverse[16];
+        for(int i = 0; i < 4; i++){
+            for(int j = 0; j < 4; j++){
+                A[i][j] = entries[i][j];
+            }
+        }
+        adjoint(A, adj);
 
-void Matrix::loadIdentity() {
+        // Find Inverse using formula "inverse(A) =
+        // adj(A)/det(A)"
+        for (int i = 0; i < 4; i++)
+            for (int j = 0; j < 4; j++)
+                inverse[i*4 + j] = adj[i][j] / det;
+
+        return Matrix(inverse);
+    }
+
+
+}
+
+void Matrix::readyIdentity() {
     for (int i = 0; i < 4; ++i)
         for (int j = 0; j < 4; ++j) {
             if(i == j)
@@ -69,53 +94,52 @@ void Matrix::loadIdentity() {
         }
 }
 
-double Matrix::getDeterminant(int n)
+double Matrix::getDeterminant(double matrix[4][4], int n)
 {
-    double D = 0; // Initialize result
-
-    //  Base case : if matrix contains single element
-    if (n == 1)
-        return entries[0][0];
-
-    int temp[4][4]; // To store cofactors
-
-    int sign = 1; // To store sign multiplier
-
-    // Iterate for each element of first row
-    for (int f = 0; f < n; f++)
-    {
-        // Getting Cofactor of mat[0][f]
-        getCofactor(temp, 0, f, n);
-        D += sign * entries[0][f]
-             * getDeterminant(n - 1);
-
-        // terms are to be added with alternate sign
+    double determinant = 0;
+    if (n == 1) {
+        return matrix[0][0];
+    }
+    if (n == 2) {
+        return (matrix[0][0] * matrix[1][1]) - (matrix[0][1] * matrix[1][0]);
+    }
+    double temp[4][4];
+    int sign = 1;
+    for (int i = 0; i < n; i++) {
+        getCofactor(matrix, temp, 0, i, n);
+        determinant += sign * matrix[0][i] * getDeterminant(temp, n - 1);
         sign = -sign;
     }
-
-    return D;
+    return determinant;
 }
 
-void Matrix::getCofactor(int temp[4][4], int p, int q, int n)
+double Matrix::getDeterminant()
 {
+    int n = 4;
+    double matrix[4][4];
+    for(int i = 0; i < 4; i++){
+        for(int j = 0; j < 4; j++){
+            matrix[i][j] = entries[i][j];
+        }
+    }
+    double determinant = 0;
+    double temp[4][4];
+    int sign = 1;
+    for (int i = 0; i < n; i++) {
+        getCofactor(matrix, temp, 0, i, n);
+        determinant += sign * matrix[0][i] * getDeterminant(temp, n - 1);
+        sign = -sign;
+    }
+    return determinant;
+}
+
+void Matrix::getCofactor(double matrix[4][4], double temp[4][4], int p, int q, int n) {
     int i = 0, j = 0;
-
-    // Looping for each element of the matrix
-    for (int row = 0; row < n; row++)
-    {
-        for (int col = 0; col < n; col++)
-        {
-            //  Copying into temporary matrix only those
-            //  element which are not in given row and
-            //  column
-            if (row != p && col != q)
-            {
-                temp[i][j++] = entries[row][col];
-
-                // Row is filled, so increase row index and
-                // reset col index
-                if (j == n - 1)
-                {
+    for (int row = 0; row < n; row++) {
+        for (int col = 0; col < n; col++) {
+            if (row != p && col != q) {
+                temp[i][j++] = matrix[row][col];
+                if (j == n - 1) {
                     j = 0;
                     i++;
                 }
@@ -123,6 +147,28 @@ void Matrix::getCofactor(int temp[4][4], int p, int q, int n)
         }
     }
 }
+
+void Matrix::adjoint(double A[4][4], double adj[4][4]) {
+
+    int sign = 1;
+    double temp[4][4];
+
+    for (int i = 0; i < 4; i++) {
+        for (int j = 0; j < 4; j++) {
+            // Get cofactor of A[i][j]
+            getCofactor(A, temp, i, j, 4);
+
+            // sign of adj[j][i] positive if sum of row
+            // and column indexes is even.
+            sign = ((i + j) % 2 == 0) ? 1 : -1;
+
+            // Interchanging rows and columns to get the
+            // transpose of the cofactor matrix
+            adj[j][i] = (sign) * (getDeterminant(temp, 4 - 1));
+        }
+    }
+}
+
 
 std::string Matrix::str() const {
     std::stringstream ss;
@@ -139,8 +185,85 @@ std::string Matrix::str() const {
     return ss.str();
 }
 
-float Matrix::getEntry(int i, int j) {
+double Matrix::getEntry(int i, int j) {
     return entries[i][j];
 }
+
+void Matrix::readyTranslation(Vector translationVec) {
+    this->readyIdentity();
+    entries[0][3] = translationVec.getX();
+    entries[1][3] = translationVec.getY();
+    entries[2][3] = translationVec.getZ();
+    entries[3][3] = translationVec.getW();
+}
+
+void Matrix::readyScale(Vector scaleVec) {
+    this->readyIdentity();
+    entries[0][0] = scaleVec.getX();
+    entries[1][1] = scaleVec.getY();
+    entries[2][2] = scaleVec.getZ();
+    entries[3][3] = scaleVec.getW();
+}
+
+void Matrix::readyRotationAxis(Vector axis, double angle) {
+    Vector u = axis.normalise();
+
+    double sinAngle = sin(M_PI*angle / 180);
+    double cosAngle = cos(M_PI*angle / 180);
+    double oneMinusCosAngle = 1 - cosAngle;
+
+    this->readyIdentity();
+
+    entries[0][0] = u.getX() * u.getX() + cosAngle * (1 - u.getX() * u.getX());
+    entries[1][0] = u.getX() * u.getY() * oneMinusCosAngle - sinAngle * u.getZ();
+    entries[2][0] = u.getX() * u.getZ() * oneMinusCosAngle + sinAngle * u.getY();
+
+    entries[0][1] = u.getX() * u.getY() * oneMinusCosAngle + sinAngle * u.getZ();
+    entries[1][1] = u.getY() * u.getY() + cosAngle * (1 - u.getY() * u.getY());
+    entries[2][1] = u.getY() * u.getZ() * oneMinusCosAngle - sinAngle * u.getX();
+
+    entries[0][2] = u.getX() * u.getZ() * oneMinusCosAngle - sinAngle * u.getY();
+    entries[1][2] = u.getY() * u.getZ() * oneMinusCosAngle + sinAngle * u.getX();
+    entries[2][2] = u.getZ() * u.getZ() + cosAngle * (1 - u.getZ() * u.getZ());
+}
+
+void Matrix::readyRotationX(double angle) {
+    this->readyIdentity();
+
+    entries[1][1] = cos(M_PI*angle / 180);
+    entries[1][2] = sin(M_PI*angle / 180);
+    entries[2][1] = -entries[1][2];
+    entries[2][2] = entries[1][1];
+}
+
+void Matrix::readyRotationY(double angle) {
+    this->readyIdentity();
+
+    entries[0][0] = cos(M_PI*angle / 180);
+    entries[0][2] = -sin(M_PI*angle / 180);
+    entries[2][0] = -entries[0][2];
+    entries[2][2] = entries[0][0];
+}
+
+void Matrix::readyRotationZ(double angle) {
+    this->readyIdentity();
+
+    entries[0][0] = cos(M_PI*angle / 180);
+    entries[0][1] = sin(M_PI*angle / 180);
+    entries[1][0] = -entries[0][1];
+    entries[1][1] = entries[0][0];
+}
+
+bool Matrix::equals(Matrix m) {
+    for(int i = 0; i < 4; i++){
+        for(int j = 0; j < 4; j++){
+            if(entries[i][j] != m.entries[i][j])
+            return false;
+        }
+    }
+    return true;
+}
+
+
 
 

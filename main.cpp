@@ -48,30 +48,49 @@ int main() {
 //    printf("wektor %s znormalizowany: %s \n", perp.str().c_str(), normalised.str().c_str());
 //    printf("dlugosc wektora znormalizowanego: %f \n", normalised.length());
 
-    double values[16] = {0,1,2,3,
-                        4,5,6,7,
-                        8,9,10,11,
-                        12,13,14,15};
-    Matrix m1 = Matrix(values);
-    m1.add(Matrix(values));
-    printf("matrix: \n%s", m1.str().c_str());
+//    double values[16] = {0,1,2,3,
+//                        4,5,6,7,
+//                        8,9,10,11,
+//                        12,13,14,15};
+//    Matrix m1 = Matrix(values);
+//    m1.add(Matrix(values));
+//    printf("matrix: \n%s", m1.str().c_str());
+//
+//
+//    Matrix m2 = Matrix(values);
+//    m2.sub(Matrix(values));
+//    printf("\nmatrix: \n%s", m2.str().c_str());
+//
+//    Matrix m3 = m1.multpily(2);
+//    printf("\nmatrix: \n%s", m3.str().c_str());
+//
+//    Matrix m4 = m3.multiplyByMatrix(Matrix(values));
+//    printf("\nmatrix: \n%s", m4.str().c_str());
+//
+//    Matrix m5 = m1.transpose();
+//    printf("\nmatrix: \n%s", m5.str().c_str());
+//
+//    //printf("\ndeterminant: %d", m5.getDeterminant(4));
+//
+//    m5.readyIdentity();
+//    printf("\nmatrix: \n%s", m5.str().c_str());
 
-    Matrix m2 = Matrix(values);
-    m2.sub(Matrix(values));
-    printf("\nmatrix: \n%s", m2.str().c_str());
+    double niceDetValues[16] = {1,1,-1,1,
+                               2,2,-2,1,
+                               -2,4,-2,-2,
+                               2,-2,2,6};
+    Matrix matrix = Matrix(niceDetValues);
+    printf("\nmatrix: \n%s", matrix.str().c_str());
+    printf("\ndeterminant: %f", matrix.getDeterminant());
 
-    Matrix m3 = m1.multpily(2);
-    printf("\nmatrix: \n%s", m3.str().c_str());
+    Matrix inversed = matrix.inverse();
+    printf("\nmatrix: \n%s", inversed.str().c_str());
 
-    Matrix m4 = m3.multiplyByMatrix(Matrix(values));
-    printf("\nmatrix: \n%s", m4.str().c_str());
-
-    Matrix m5 = m1.transpose();
-    printf("\nmatrix: \n%s", m5.str().c_str());
-
-    printf("\ndeterminant: %d", m5.getDeterminant(4));
-
-    m5.loadIdentity();
-    printf("\nmatrix: \n%s", m5.str().c_str());
+    Vector v1 = Vector(5,4,3, 1);
+    Matrix translation = Matrix(niceDetValues);
+    translation.readyTranslation(v1);
+    printf("\nmatrix: \n%s", translation.str().c_str());
+    translation.readyScale(v1);
+    printf("\nmatrix: \n%s", translation.str().c_str());
     return 0;
 }
