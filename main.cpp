@@ -48,49 +48,86 @@ int main() {
 //    printf("wektor %s znormalizowany: %s \n", perp.str().c_str(), normalised.str().c_str());
 //    printf("dlugosc wektora znormalizowanego: %f \n", normalised.length());
 
-//    double values[16] = {0,1,2,3,
-//                        4,5,6,7,
-//                        8,9,10,11,
-//                        12,13,14,15};
-//    Matrix m1 = Matrix(values);
-//    m1.add(Matrix(values));
-//    printf("matrix: \n%s", m1.str().c_str());
-//
-//
-//    Matrix m2 = Matrix(values);
-//    m2.sub(Matrix(values));
-//    printf("\nmatrix: \n%s", m2.str().c_str());
-//
-//    Matrix m3 = m1.multpily(2);
-//    printf("\nmatrix: \n%s", m3.str().c_str());
-//
-//    Matrix m4 = m3.multiplyByMatrix(Matrix(values));
-//    printf("\nmatrix: \n%s", m4.str().c_str());
-//
-//    Matrix m5 = m1.transpose();
-//    printf("\nmatrix: \n%s", m5.str().c_str());
-//
-//    //printf("\ndeterminant: %d", m5.getDeterminant(4));
-//
-//    m5.readyIdentity();
-//    printf("\nmatrix: \n%s", m5.str().c_str());
+    double values[16] = {0,1,2,3,
+                        4,5,6,7,
+                        8,9,10,11,
+                        12,13,14,15};
+    double values2[16] = {1,2,1,2,
+                          1,2,1,2,
+                          1,2,1,2,
+                          1,2,1,2};
+    ////dodawanie, odejmowanie, mnozenie przez skalar
+    Matrix m1 = Matrix(values);
+    printf("matrix D: \n%s", m1.str().c_str());
+    m1.add(Matrix(values));
+    printf("\nmatrix D + D: \n%s", m1.str().c_str());
+    Matrix m2 = Matrix(values);
+    m2.sub(Matrix(values));
+    printf("\nmatrix D - D: \n%s", m2.str().c_str());
+    Matrix m3 = m1.multpily(4);
+    printf("\nmatrix D * 4: \n%s", m3.str().c_str());
 
+    ////sprawdzenie przemiennosci mnozenia
+    Matrix A = Matrix(values);
+    printf("\n\nmatrix A: \n%s", A.str().c_str());
+    Matrix B = Matrix(values2);
+    printf("\nmatrix B: \n%s", B.str().c_str());
+    Matrix resultAB = A.multiplyByMatrix(B);
+    Matrix resultBA = B.multiplyByMatrix(A);
+    printf("\nmatrix A*B: \n%s", resultAB.str().c_str());
+    printf("\nmatrix B*A: \n%s", resultBA.str().c_str());
+    if(resultAB.equals(resultBA))
+        printf("\nMnozenie jest przemienne \n");
+    else
+        printf("\nMnozenie nie jest przemienne \n");
+
+    ////transpozycja
+    Matrix transpose = resultBA.transpose();
+    printf("\nmatrix B*A transposed: \n%s", transpose.str().c_str());
+
+    ////macierz jednostkowa
+    transpose.readyIdentity();
+    printf("\nidentity matrix: \n%s", transpose.str().c_str());
+
+    ////wyznacznik
     double niceDetValues[16] = {1,1,-1,1,
                                2,2,-2,1,
                                -2,4,-2,-2,
                                2,-2,2,6};
     Matrix matrix = Matrix(niceDetValues);
-    printf("\nmatrix: \n%s", matrix.str().c_str());
-    printf("\ndeterminant: %f", matrix.getDeterminant());
+    printf("\n\nmatrix C: \n%s", matrix.str().c_str());
+    printf("\ndet(C) = %f", matrix.getDeterminant());
 
+    ////macierz odwrotna
     Matrix inversed = matrix.inverse();
-    printf("\nmatrix: \n%s", inversed.str().c_str());
+    printf("\n\n(c)^-1: \n%s", inversed.str().c_str());
 
+    ////translacja
     Vector v1 = Vector(5,4,3, 1);
-    Matrix translation = Matrix(niceDetValues);
-    translation.readyTranslation(v1);
-    printf("\nmatrix: \n%s", translation.str().c_str());
-    translation.readyScale(v1);
-    printf("\nmatrix: \n%s", translation.str().c_str());
+    Matrix operation = Matrix(niceDetValues);
+    operation.readyTranslation(v1);
+    printf("\n\noperation vector: %s \noperation matrix: \n%s", v1.str().c_str(), operation.str().c_str());
+
+    ////skalowanie
+    operation.readyScale(v1);
+    printf("\nscale matrix: \n%s", operation.str().c_str());
+
+    ////obroty
+    Vector v2 = Vector(2,1,3, 1);
+    operation.readyRotationAxis(v2, 90);
+    printf("\n\nrotation vector: %s\nrotation angle = 90 \nrotation matrix: \n%s", v1.str().c_str(), operation.str().c_str());
+    operation.readyRotationX(90);
+    printf("\nrotation (X, 90) matrix: \n%s", operation.str().c_str());
+    operation.readyRotationY(90);
+    printf("\nrotation (Y, 90) matrix: \n%s", operation.str().c_str());
+    operation.readyRotationZ(90);
+    printf("\nrotation (Z, 90) matrix: \n%s", operation.str().c_str());
+
+    ////zad3
+    Vector vec = Vector(1,0,0,1);
+    Matrix rotation = Matrix(niceDetValues);
+    rotation.readyRotationY(90);
+    Vector rotatedVec = rotation.multiplyByVector(vec);
+    printf("\n\n%s rotated (Y, 90): %s", vec.str().c_str(), rotatedVec.str().c_str());
     return 0;
 }

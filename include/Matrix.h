@@ -25,10 +25,12 @@ public:
     void sub(Matrix m);
     Matrix multpily(double a) const;
     Matrix multiplyByMatrix(Matrix m);
+    Vector multiplyByVector(Vector v);
 
     Matrix transpose();
-    Matrix inverse();
     double getDeterminant();
+    Matrix inverse();
+
 
     void readyIdentity();
     void readyTranslation(Vector translationVec);

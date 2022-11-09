@@ -50,6 +50,13 @@ Matrix Matrix::multiplyByMatrix(Matrix m) {
     return Matrix(temp);
 }
 
+Vector Matrix::multiplyByVector(Vector v) {
+    return {entries[0][0] * v.getX() + entries[0][1] * v.getX() + entries[0][2] * v.getX() + + entries[0][3] * v.getX(),
+            entries[1][0] * v.getY() + entries[1][1] * v.getY() + entries[1][2] * v.getY() + + entries[1][3] * v.getY(),
+            entries[2][0] * v.getZ() + entries[2][1] * v.getZ() + entries[2][2] * v.getZ() + + entries[2][3] * v.getZ(),
+            entries[3][0] * v.getW() + entries[3][1] * v.getW() + entries[3][2] * v.getW() + + entries[3][3] * v.getW()};
+}
+
 Matrix Matrix::transpose() {
     double temp[16];
     for (int i = 0; i < 4; ++i)
@@ -263,6 +270,8 @@ bool Matrix::equals(Matrix m) {
     }
     return true;
 }
+
+
 
 
 
