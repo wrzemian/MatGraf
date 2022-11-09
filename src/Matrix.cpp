@@ -51,10 +51,14 @@ Matrix Matrix::multiplyByMatrix(Matrix m) {
 }
 
 Vector Matrix::multiplyByVector(Vector v) {
-    return {entries[0][0] * v.getX() + entries[0][1] * v.getX() + entries[0][2] * v.getX() + + entries[0][3] * v.getX(),
-            entries[1][0] * v.getY() + entries[1][1] * v.getY() + entries[1][2] * v.getY() + + entries[1][3] * v.getY(),
-            entries[2][0] * v.getZ() + entries[2][1] * v.getZ() + entries[2][2] * v.getZ() + + entries[2][3] * v.getZ(),
-            entries[3][0] * v.getW() + entries[3][1] * v.getW() + entries[3][2] * v.getW() + + entries[3][3] * v.getW()};
+    double vecTab[4] = {v.getX(), v.getY(), v.getZ(), v.getW()};
+    double result[4] = {0};
+    for (int i=0;i<4;i++){
+        for (int j=0;j<4;j++){
+            result[i]+=( entries[i][j]*vecTab[j]);
+        }
+    }
+    return {result[0], result[1], result[2], result[3]};
 }
 
 Matrix Matrix::transpose() {
@@ -237,8 +241,8 @@ void Matrix::readyRotationAxis(Vector axis, double angle) {
 void Matrix::readyRotationX(double angle) {
     this->readyIdentity();
 
-    entries[1][1] = cos(M_PI*angle / 180);
-    entries[1][2] = sin(M_PI*angle / 180);
+    entries[1][1] = round(cos(M_PI*angle / 180)*1000)/1000;
+    entries[1][2] = round(sin(M_PI*angle / 180)*1000)/1000;
     entries[2][1] = -entries[1][2];
     entries[2][2] = entries[1][1];
 }
@@ -246,8 +250,8 @@ void Matrix::readyRotationX(double angle) {
 void Matrix::readyRotationY(double angle) {
     this->readyIdentity();
 
-    entries[0][0] = cos(M_PI*angle / 180);
-    entries[0][2] = -sin(M_PI*angle / 180);
+    entries[0][0] = round(cos(M_PI*angle / 180)*1000)/1000;
+    entries[0][2] = round(-sin(M_PI*angle / 180)*1000)/1000;
     entries[2][0] = -entries[0][2];
     entries[2][2] = entries[0][0];
 }
@@ -255,8 +259,8 @@ void Matrix::readyRotationY(double angle) {
 void Matrix::readyRotationZ(double angle) {
     this->readyIdentity();
 
-    entries[0][0] = cos(M_PI*angle / 180);
-    entries[0][1] = sin(M_PI*angle / 180);
+    entries[0][0] = round(cos(M_PI*angle / 180)*1000)/1000;
+    entries[0][1] = round(sin(M_PI*angle / 180)*1000)/1000;
     entries[1][0] = -entries[0][1];
     entries[1][1] = entries[0][0];
 }
