@@ -187,7 +187,7 @@ std::string Matrix::str() const {
     ss << "|";
     for(int i = 0; i < 4; i++){
         for(int j = 0; j < 4; j++){
-           ss << " " << std::setprecision(2)  << std::setw(5) << entries[i][j] << " ";
+           ss << " " << std::setprecision(3)  << std::setw(6) << entries[i][j] << " ";
         }
         if(i != 3)
             ss << "|\n|";
