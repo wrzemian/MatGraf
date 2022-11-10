@@ -3,6 +3,7 @@
 //
 
 #include "../include/Matrix.h"
+#include <iomanip>      // std::setprecision
 
 
 Matrix::Matrix(const double *inValues) {
@@ -186,13 +187,14 @@ std::string Matrix::str() const {
     ss << "|";
     for(int i = 0; i < 4; i++){
         for(int j = 0; j < 4; j++){
-           ss << " " << entries[i][j] << " ";
+           ss << " " << std::setprecision(2)  << std::setw(5) << entries[i][j] << " ";
         }
         if(i != 3)
             ss << "|\n|";
         else
             ss << "|";
     }
+    ss << "\n";
     return ss.str();
 }
 
