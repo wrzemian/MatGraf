@@ -24,7 +24,9 @@ public:
     Quaternion div(Quaternion q);
     void inverse();
 
-    static Quaternion prepareQuaternion( double angle, const Vector& axis);
+    void prepareQuaternion(double angle, const Vector& axis);
+
+    static Vector rotate(Vector point, double angle, const Vector& axis);
 
     std::string str() const;
     bool equals(const Quaternion& q) const;

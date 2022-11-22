@@ -153,17 +153,18 @@ int main() {
     printf("\nmnozenie kwaternionow%s jest przemienne", q6.equals(q7) ? "" : " nie");
 
     Quaternion q8 = q4.div(q5);
-    printf("\n\nq6 = q4 / q5: \n%s", q8.str().c_str());
+    printf("\n\nq8 = q4 / q5: \n%s", q8.str().c_str());
 
     Vector point = Vector(-1,-1,-1);
     Vector rotationAxis = Vector(1, 0, 0);
     double angle = 270;
+    Quaternion q9 = Quaternion(0,0,0,0);
+    q9.prepareQuaternion(angle, point);
+    printf("\nrotation quaternion: \n%s", q9.str().c_str());
+    q9.inverse();
+    printf("\ninversed quaternion: \n%s", q9.str().c_str());
 
-    Quaternion q = Quaternion::prepareQuaternion(angle, rotationAxis);
-    Quaternion q_ = q.copy();
-    q_.inverse();
-
-    //TODO: point_ = q * point * q_
-    //Vector point_ = point.multpily()
+    Vector rotated = Quaternion::rotate(point, angle, rotationAxis);
+    printf("\n\nrotated point: \n%s", rotated.str().c_str());
     return 0;
 }

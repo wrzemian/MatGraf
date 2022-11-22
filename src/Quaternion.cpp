@@ -87,15 +87,30 @@ static double radians(double angle) {
 }
 
 void Quaternion::inverse() {
-    this->v.multpily(-1.0);
+    Vector v = this->v;
+    this->v = v.multpily(-1);
 }
 
-Quaternion Quaternion::prepareQuaternion(double angle, const Vector& axis) {
+void Quaternion::prepareQuaternion(double angle, const Vector& axis) {
     double A = cos(radians(angle/2.0));
 
     double a = axis.getX(), b = axis.getY(), c = axis.getZ();
     double multiplier = sin(radians(angle/2.0)) / sqrt(a*a + b*b + c*c);
 
-    return {A, axis.multpily(multiplier)};
+    this->a = A;
+    this->v = axis.multpily(multiplier);
+}
+
+Vector Quaternion::rotate(Vector point, double angle, const Vector& axis) {
+    Quaternion q = Quaternion(0,0,0,0);
+    q.prepareQuaternion(angle, axis);
+    Quaternion q_ = q.copy();
+    q_.inverse();
+    Quaternion qp = Quaternion(0,point);
+
+    Quaternion qqp = q.mul(qp);
+    Quaternion result = qqp.mul(q_);
+
+    return {result.v};
 }
 

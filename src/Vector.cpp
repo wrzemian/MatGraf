@@ -86,9 +86,9 @@ double Vector::getW() const {
 std::string Vector::str() const {
     std::stringstream ss;
     if(w!=0)
-        ss << "[" << x << ", " << y << ", " << z << ", " << w << "]";
+        ss << "[" << round(x*1000)/1000 << ", " << round(y*1000)/1000 << ", " << round(z*1000)/1000 << ", " << round(w*1000)/1000 << "]";
     else
-        ss << "[" << x << ", " << y << ", " << z << "]";
+        ss << "[" << round(x*1000)/1000 << ", " << round(y*1000)/1000 << ", " << round(z*1000)/1000 << "]";
     return ss.str();
 }
 
