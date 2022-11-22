@@ -18,6 +18,7 @@ private:
 public:
     Vector(double x, double y, double z);
     Vector(double x, double y, double z, double w);
+
     virtual ~Vector();
 
     std::string str() const;
