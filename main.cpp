@@ -11,6 +11,7 @@ struct Line{
     Vector point;
 };
 
+/////////createLine jest do naprawy
 Line createLine(double x, double a, double y, double b, double z, double c){
     double p0 = 0;
     double p1 = 1;
@@ -36,35 +37,45 @@ double calculateT(Line l1, Line l2) {
     return numerator / v1xv2len;
 }
 
-Vector calculateIntersection(const Line& l1, Line l2) {
-    double t = calculateT(l1, l2);
+Vector calculateIntersection(const Line& l1, const Line& l2) {
+    double t1 = calculateT(l1, l2);
+    double t2 = calculateT(l2, l1);
     Vector p1 = l1.point;
     Vector v1 = l1.vector;
+    std::cout<< "\n\nt1 = " << t1;
+    std::cout<< "\n\nt2 = " << t2;
+    Vector point1 = p1;
 
-    Vector point = p1;
+    point1.add(v1.multpily(t1));
+    std::cout<< "\npoint1 = " << point1.str();
 
-    point.add(v1.multpily(t));
-    std::cout<< "\n\nt = " << t;
-    std::cout<< "\npoint1 = " << point.str();
-
-    ////tak nie wolno
     Vector point2 = l2.point;
     Vector v2 = l2.vector;
-    point2.add(v2.multpily(t));
+    point2.add(v2.multpily(t2));
     std::cout<< "\npoint2 = " << point2.str();
 
+    Vector n = point2;
+    n.sub(point1);
+    std::cout<< "\nn = " << n.str();
 
-    return point;
+    if(n.equals(Vector(0,0,0))){
+        return point1;
+    }
+    else {
+        std::cout<<"brak przeciecia";
+    }
 }
 
 
 
 int main() {
-    Line line1 = createLine(1/3.,2/3.,1,-4,1/5.,0);
+    Line line1 = { Vector(1,1,2), Vector(1.5,1.5,2)};
+    //Line line1 = createLine(1/3.,2/3.,1,-4,1/5.,0);
     printf("point: %s", line1.point.str().c_str());
     printf("\nvector: %s", line1.vector.str().c_str());
 
-    Line line2 = createLine(1,2,-1/5.,4/5.,1/3.,0);
+     Line line2 = { Vector(1,1,2), Vector(1.5,1.5,2)};
+    //Line line2 = createLine(1,2,-1/5.,4/5.,1/3.,0);
     printf("\npoint: %s", line2.point.str().c_str());
     printf("\nvector: %s", line2.vector.str().c_str());
 
