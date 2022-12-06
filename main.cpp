@@ -12,15 +12,11 @@ struct Line{
 };
 
 /////////createLine jest do naprawy
-Line createLine(double x, double a, double y, double b, double z, double c){
-    double p0 = 0;
-    double p1 = 1;
-    Vector point1(p0 * x + a, p0 * y + b, p0 * z + c);
-    Vector point2(p1 * x + a, p1 * y + b, p1 * z + c);
-    Vector vector = point2.copy();
-    vector.sub(point1);
+Line createLine(Vector p1, Vector p2){
+    Vector vector = p1.copy();
+    vector.sub(p2);
 
-    return {vector, point2};
+    return {vector, p2};
 }
 
 double calculateT(Line l1, Line l2) {
@@ -42,52 +38,38 @@ Vector calculateIntersection(const Line& l1, const Line& l2) {
     double t2 = calculateT(l2, l1);
     Vector p1 = l1.point;
     Vector v1 = l1.vector;
-    std::cout<< "\n\nt1 = " << t1;
-    std::cout<< "\n\nt2 = " << t2;
+    //std::cout<< "\n\nt1 = " << t1;
+    //std::cout<< "\n\nt2 = " << t2;
     Vector point1 = p1;
 
     point1.add(v1.multpily(t1));
-    std::cout<< "\npoint1 = " << point1.str();
+    //std::cout<< "\npoint1 = " << point1.str();
 
     Vector point2 = l2.point;
     Vector v2 = l2.vector;
     point2.add(v2.multpily(t2));
-    std::cout<< "\npoint2 = " << point2.str();
+    //std::cout<< "\npoint2 = " << point2.str();
 
     Vector n = point2;
     n.sub(point1);
-    std::cout<< "\nn = " << n.str();
+    //std::cout<< "\nn = " << n.str();
 
     if(n.equals(Vector(0,0,0))){
         return point1;
     }
-    else {
-        std::cout<<"brak przeciecia";
-    }
+
 }
 
 
 
 int main() {
-    Line line1 = { Vector(1,1,2), Vector(1.5,1.5,2)};
-    //Line line1 = createLine(1/3.,2/3.,1,-4,1/5.,0);
-    printf("point: %s", line1.point.str().c_str());
-    printf("\nvector: %s", line1.vector.str().c_str());
+    Line line1 = createLine(Vector(-2,4,0), Vector(1,5,5));
+    Line line2 = createLine(Vector(-2,4,0), Vector(-1,-1,3));
 
-     Line line2 = { Vector(1,1,2), Vector(1.5,1.5,2)};
-    //Line line2 = createLine(1,2,-1/5.,4/5.,1/3.,0);
-    printf("\npoint: %s", line2.point.str().c_str());
-    printf("\nvector: %s", line2.vector.str().c_str());
+    printf("point: %s", calculateIntersection(line1, line2).str().c_str());
 
-//    Line line1 = createLine(1,0,1,0,1,0);
-//    printf("point: %s", line1.point.str().c_str());
-//    printf("\nvector: %s", line1.vector.str().c_str());
-//
-//    Line line2 = createLine(1,6,-1,6,1,0);
-//    printf("\n\npoint: %s", line2.point.str().c_str());
-//    printf("\nvector: %s", line2.vector.str().c_str());
-
-    printf("\n\npoint: %s", calculateIntersection(line1, line2).str().c_str());
+    double angle = line1.vector.findAngle(line2.vector);
+    printf("\n\nangle: %f", angle);
 
     return 0;
 }
