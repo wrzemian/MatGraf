@@ -6,22 +6,77 @@
 
 void task1(); void task2(); void task3();
 
-double det3x3(const double *W, const double *) {
+struct Line{
+    Vector vector;
+    Vector point;
+};
 
+Line createLine(double x, double a, double y, double b, double z, double c){
+    double p0 = 0;
+    double p1 = 1;
+    Vector point1(p0 * x + a, p0 * y + b, p0 * z + c);
+    Vector point2(p1 * x + a, p1 * y + b, p1 * z + c);
+    Vector vector = point2.copy();
+    vector.sub(point1);
+
+    return {vector, point2};
+}
+
+double calculateT(Line l1, Line l2) {
+    Vector p1 = l1.point;
+    Vector p2 = l2.point;
+    Vector v1 = l1.vector;
+    Vector v2 = l2.vector;
+
+    p2.sub(p1);
+    Vector p2xv2 = p2.cross(v2);
+    Vector v1xv2 = v1.cross(v2);
+    double numerator = p2xv2.dot(v1xv2);
+    double v1xv2len = pow(v1xv2.length(), 2);
+    return numerator / v1xv2len;
+}
+
+Vector calculateIntersection(const Line& l1, Line l2) {
+    double t = calculateT(l1, l2);
+    Vector p1 = l1.point;
+    Vector v1 = l1.vector;
+
+    Vector point = p1;
+
+    point.add(v1.multpily(t));
+    std::cout<< "\n\nt = " << t;
+    std::cout<< "\npoint1 = " << point.str();
+
+    ////tak nie wolno
+    Vector point2 = l2.point;
+    Vector v2 = l2.vector;
+    point2.add(v2.multpily(t));
+    std::cout<< "\npoint2 = " << point2.str();
+
+
+    return point;
 }
 
 
 
 int main() {
+    Line line1 = createLine(1/3.,2/3.,1,-4,1/5.,0);
+    printf("point: %s", line1.point.str().c_str());
+    printf("\nvector: %s", line1.vector.str().c_str());
 
-    double niceDetValues[16] = {5,4,3,1,
-    -2,6,-9,1,
-    8,2,1,1,
-    1,1,1,1};
+    Line line2 = createLine(1,2,-1/5.,4/5.,1/3.,0);
+    printf("\npoint: %s", line2.point.str().c_str());
+    printf("\nvector: %s", line2.vector.str().c_str());
 
-    Matrix matrix = Matrix(niceDetValues);
-    printf("\n\nmatrix C: \n%s", matrix.str().c_str());
-    printf("\ndet(C) = %f", matrix.getDeterminant());
+//    Line line1 = createLine(1,0,1,0,1,0);
+//    printf("point: %s", line1.point.str().c_str());
+//    printf("\nvector: %s", line1.vector.str().c_str());
+//
+//    Line line2 = createLine(1,6,-1,6,1,0);
+//    printf("\n\npoint: %s", line2.point.str().c_str());
+//    printf("\nvector: %s", line2.vector.str().c_str());
+
+    printf("\n\npoint: %s", calculateIntersection(line1, line2).str().c_str());
 
     return 0;
 }
