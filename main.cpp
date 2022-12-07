@@ -16,6 +16,11 @@ struct Plane {
     Vector point;
 };
 
+struct Sphere {
+    Vector center;
+    double radius;
+};
+
 
 Line createLine(Vector p1, Vector p2){
     Vector vector = p1.copy();
@@ -109,6 +114,49 @@ Line calculateLineBetweenPlanes(const Plane& p1, const Plane& p2){
     return {n1.cross(n2), Vector(0,0,0)};
 }
 
+void calculateIntersectionSphereLine(const Line& l, const Sphere& s) {
+    Vector v = l.vector;
+    Vector e = l.point;
+    Vector center = s.center;
+    double r = s.radius;
+    Vector e_c = e;
+    e_c.sub(center);
+
+    double a = pow(v.length(), 2);
+    double b = 2 * e_c.dot(v);
+    double c = pow(e_c.length(),2) - r*r;
+
+    double delta = b * b - 4 * a * c;
+    double t1, t2;
+
+    if (delta > 0) {
+        printf("\n\nzad8 there are two intersections");
+        t1 = (-b + sqrt(delta)) / (2 * a);
+        t2 = (-b - sqrt(delta)) / (2 * a);
+
+        Vector point1 = l.point;
+        Vector point2 = l.point;
+        Vector vector = l.vector;
+        point1.add(vector.multpily(t1));
+        point2.add(vector.multpily(t2));
+
+        printf("\npoint 1: %s", point1.str().c_str());
+        printf("\npoint 2: %s", point2.str().c_str());
+    }
+    else if(delta == 0) {
+        printf("\n\nzad8 there is one intersection");
+        t1 = -b/(2*a);
+        Vector point = l.point;
+        Vector vector = l.vector;
+
+        point.add(vector.multpily(t1));
+        printf("\npoint 1: %s", point.str().c_str());
+    }
+    else {
+        printf("\n\nzad8 there are no intersections");
+    }
+}
+
 
 int main() {
     //zad1
@@ -131,7 +179,7 @@ int main() {
     printf("\nzad4 angle: %f", angle2);
 
     //zad5
-
+    //Line intersectionLine = calculateLineBetweenPlanes()
     //zad6
 
     //zad7
@@ -140,7 +188,10 @@ int main() {
     printf("\n\nzad 7 point: %s", calculateIntersectionLineLine(line4, line5).str().c_str());
 
     //zad8
-    
+    Line line6 = createLine(Vector(5,3,-4),Vector(3,-1,-2));
+    Sphere sphere1 = {Vector(0,0,0), sqrt(26)};
+    calculateIntersectionSphereLine(line6, sphere1);
+
     return 0;
 }
 
