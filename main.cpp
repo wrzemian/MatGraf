@@ -21,6 +21,11 @@ struct Sphere {
     double radius;
 };
 
+struct Section {
+    Vector A;
+    Vector B;
+};
+
 
 Line createLine(Vector p1, Vector p2){
     Vector vector = p1.copy();
@@ -59,27 +64,38 @@ Vector calculateIntersectionLineLine(const Line& l1, const Line& l2) {
     double t2 = calculateTLineLine(l2, l1);
     Vector p1 = l1.point;
     Vector v1 = l1.vector;
-    //std::cout<< "\n\nt1 = " << t1;
-    //std::cout<< "\n\nt2 = " << t2;
     Vector point1 = p1;
 
     point1.add(v1.multpily(t1));
-    //std::cout<< "\npoint1 = " << point1.str();
 
     Vector point2 = l2.point;
     Vector v2 = l2.vector;
     point2.add(v2.multpily(t2));
-    //std::cout<< "\npoint2 = " << point2.str();
 
     Vector n = point2;
     n.sub(point1);
-    //std::cout<< "\nn = " << n.str();
 
     if(n.equals(Vector(0,0,0))){
         return point1;
     }
 
 }
+
+Vector calculateIntersectionSectionSection(const Section& s1, const Section& s2) {
+    Line l1 = createLine(s1.A, s1.B);
+    Line l2 = createLine(s2.A, s2.B);
+
+    Vector p = calculateIntersectionLineLine(l1, l2);
+
+    if( p.getX() > s1.A.getX() && p.getX() < s1.B.getX() &&
+        p.getY() > s1.A.getY() && p.getY() < s1.B.getY() &&
+        p.getZ() > s1.A.getZ() && p.getZ() < s1.B.getZ() &&
+        p.getX() > s2.A.getX() && p.getX() < s2.B.getX() &&
+        p.getY() > s2.A.getY() && p.getY() < s2.B.getY() &&
+        p.getZ() > s2.A.getZ() && p.getZ() < s2.B.getZ())
+        return p;
+}
+
 
 double calculateTLinePlane(Line l1, Plane p1) {
     Vector p = l1.point;
@@ -195,7 +211,7 @@ int main() {
     Plane plane3 = createPlane(Vector(0,0,-14), Vector(0,-3,-5), Vector(-3,0,-2));
     printf("\n\nzad5");
     Line intersectionLine = calculateLineBetweenPlanes(plane2, plane3);
-    printf(" point: %s, vector: %s", intersectionLine.point.str().c_str(), intersectionLine.vector.str().c_str());
+    printf(" found line: %s + t%s", intersectionLine.point.str().c_str(), intersectionLine.vector.str().c_str());
 
 
     //zad6
@@ -203,14 +219,14 @@ int main() {
     printf("\nzad6 angle: %f", angle3);
 
     //zad7
-    Line line4 = createLine(Vector(5,5,4), Vector(10,10,6));
-    Line line5 = createLine(Vector(5,5,5), Vector(10,10,3));
-    printf("\n\nzad 7 point: %s", calculateIntersectionLineLine(line4, line5).str().c_str());
+    Section section1 = {Vector(5,5,4), Vector(10,10,6)};
+    Section section2 = {Vector(5,5,5), Vector(10,10,3)};
+    printf("\n\nzad 7 point: %s", calculateIntersectionSectionSection(section1, section2).str().c_str());
 
     //zad8
-    Line line6 = createLine(Vector(5,3,-4),Vector(3,-1,-2));
+    Line line4 = createLine(Vector(5,3,-4),Vector(3,-1,-2));
     Sphere sphere1 = {Vector(0,0,0), sqrt(26)};
-    calculateIntersectionSphereLine(line6, sphere1);
+    calculateIntersectionSphereLine(line4, sphere1);
 
     return 0;
 }
