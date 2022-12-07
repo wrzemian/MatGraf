@@ -87,12 +87,12 @@ Vector calculateIntersectionSectionSection(const Section& s1, const Section& s2)
 
     Vector p = calculateIntersectionLineLine(l1, l2);
 
-    if( p.getX() > s1.A.getX() && p.getX() < s1.B.getX() &&
-        p.getY() > s1.A.getY() && p.getY() < s1.B.getY() &&
-        p.getZ() > s1.A.getZ() && p.getZ() < s1.B.getZ() &&
-        p.getX() > s2.A.getX() && p.getX() < s2.B.getX() &&
-        p.getY() > s2.A.getY() && p.getY() < s2.B.getY() &&
-        p.getZ() > s2.A.getZ() && p.getZ() < s2.B.getZ())
+    if( p.getX() >= s1.A.getX() && p.getX() <= s1.B.getX() &&
+        p.getY() >= s1.A.getY() && p.getY() <= s1.B.getY() &&
+        p.getZ() >= s1.A.getZ() && p.getZ() <= s1.B.getZ() &&
+        p.getX() >= s2.A.getX() && p.getX() <= s2.B.getX() &&
+        p.getY() >= s2.A.getY() && p.getY() <= s2.B.getY() &&
+        p.getZ() >= s2.A.getZ() && p.getZ() <= s2.B.getZ())
         return p;
 }
 
