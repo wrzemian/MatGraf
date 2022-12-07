@@ -11,7 +11,12 @@ struct Line{
     Vector point;
 };
 
-/////////createLine jest do naprawy
+struct Plane {
+    Vector normal;
+    Vector point;
+};
+
+
 Line createLine(Vector p1, Vector p2){
     Vector vector = p1.copy();
     vector.sub(p2);
@@ -19,7 +24,18 @@ Line createLine(Vector p1, Vector p2){
     return {vector, p2};
 }
 
-double calculateT(Line l1, Line l2) {
+Plane createPlane(Vector p1, Vector p2, Vector p3) {
+    Vector vector1 = p1.copy();
+    Vector vector2 = p2.copy();
+    Vector vector3 = p3.copy();
+
+    vector1.sub(p2);
+    vector3.sub(p1);
+
+    return {vector1.cross(vector3), p2};
+}
+
+double calculateTLineLine(Line l1, Line l2) {
     Vector p1 = l1.point;
     Vector p2 = l2.point;
     Vector v1 = l1.vector;
@@ -33,9 +49,9 @@ double calculateT(Line l1, Line l2) {
     return numerator / v1xv2len;
 }
 
-Vector calculateIntersection(const Line& l1, const Line& l2) {
-    double t1 = calculateT(l1, l2);
-    double t2 = calculateT(l2, l1);
+Vector calculateIntersectionLineLine(const Line& l1, const Line& l2) {
+    double t1 = calculateTLineLine(l1, l2);
+    double t2 = calculateTLineLine(l2, l1);
     Vector p1 = l1.point;
     Vector v1 = l1.vector;
     //std::cout<< "\n\nt1 = " << t1;
@@ -60,17 +76,71 @@ Vector calculateIntersection(const Line& l1, const Line& l2) {
 
 }
 
+double calculateTLinePlane(Line l1, Plane p1) {
+    Vector p = l1.point;
+    Vector q = p1.point;
+    Vector v = l1.vector;
+    Vector n = p1.normal;
+
+    Vector minusN = n.multpily(-1);
+    p.sub(q);
+    double numerator = minusN.dot(p);
+    double divisor = n.dot(v);
+
+    return numerator / divisor;
+}
+
+Vector calculateIntersectionLinePlane(const Line& l, const Plane& p) {
+    double t = calculateTLinePlane(l, p);
+
+    Vector point = l.point;
+    Vector vector = l.vector;
+
+    point.add(vector.multpily(t));
+    return point;
+}
+
+Line calculateLineBetweenPlanes(const Plane& p1, const Plane& p2){
+    Vector q1 = p1.point;
+    Vector q2 = p2.point;
+    Vector n1 = p1.normal;
+    Vector n2 = p2.normal;
+    ////how to calculate point?????
+    return {n1.cross(n2), Vector(0,0,0)};
+}
 
 
 int main() {
+    //zad1
     Line line1 = createLine(Vector(-2,4,0), Vector(1,5,5));
     Line line2 = createLine(Vector(-2,4,0), Vector(-1,-1,3));
 
-    printf("point: %s", calculateIntersection(line1, line2).str().c_str());
+    printf("zad1 point: %s", calculateIntersectionLineLine(line1, line2).str().c_str());
 
+    //zad2
     double angle = line1.vector.findAngle(line2.vector);
-    printf("\n\nangle: %f", angle);
+    printf("\nzad2 angle: %f", angle);
 
+    //zad3
+    Line line3 = createLine(Vector(-2,2,-1), Vector(1,1,1));
+    Plane plane1 = createPlane(Vector(4,0,0), Vector(1,0,2), Vector(1,2,0));
+    printf("\n\nzad3 point: %s", calculateIntersectionLinePlane(line3, plane1).str().c_str());
+
+    //zad4
+    double angle2 = line3.vector.findAngle(plane1.normal);
+    printf("\nzad4 angle: %f", angle2);
+
+    //zad5
+
+    //zad6
+
+    //zad7
+    Line line4 = createLine(Vector(5,5,4), Vector(10,10,6));
+    Line line5 = createLine(Vector(5,5,5), Vector(10,10,3));
+    printf("\n\nzad 7 point: %s", calculateIntersectionLineLine(line4, line5).str().c_str());
+
+    //zad8
+    
     return 0;
 }
 
