@@ -110,8 +110,20 @@ Line calculateLineBetweenPlanes(const Plane& p1, const Plane& p2){
     Vector q2 = p2.point;
     Vector n1 = p1.normal;
     Vector n2 = p2.normal;
-    ////how to calculate point?????
-    return {n1.cross(n2), Vector(0,0,0)};
+
+    Vector n3 = n1.cross(n2);
+    double det = pow(n3.length(), 2);
+
+
+
+    if(det != 0.0) {
+        Vector outcome = n3;
+        Vector n3xn2 = outcome.cross(n2);
+        Vector n3xn2muld = n3xn2.multpily(-8);
+
+        return {n3, n3xn2muld};
+    }
+
 }
 
 void calculateIntersectionSphereLine(const Line& l, const Sphere& s) {
@@ -179,8 +191,16 @@ int main() {
     printf("\nzad4 angle: %f", angle2);
 
     //zad5
-    //Line intersectionLine = calculateLineBetweenPlanes()
+    Plane plane2 = createPlane(Vector(4,0,0), Vector(0,-8,0), Vector(0,0,8));
+    Plane plane3 = createPlane(Vector(0,0,-14), Vector(0,-3,-5), Vector(-3,0,-2));
+    printf("\n\nzad5");
+    Line intersectionLine = calculateLineBetweenPlanes(plane2, plane3);
+    printf(" point: %s, vector: %s", intersectionLine.point.str().c_str(), intersectionLine.vector.str().c_str());
+
+
     //zad6
+    double angle3 = plane2.normal.findAngle(plane1.normal);
+    printf("\nzad6 angle: %f", angle3);
 
     //zad7
     Line line4 = createLine(Vector(5,5,4), Vector(10,10,6));
