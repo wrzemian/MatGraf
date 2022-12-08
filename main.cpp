@@ -121,24 +121,26 @@ Vector calculateIntersectionLinePlane(const Line& l, const Plane& p) {
     return point;
 }
 
-Line calculateLineBetweenPlanes(const Plane& p1, const Plane& p2){
+Line calculateLineBetweenPlanes(const Plane& p1, const Plane& p2, double a1 = 2, double b1 = -1, double c1 =  1, double d1 = -8, double a2 = 4, double b2 = 3, double c2 = 1, double d2 = 14){
     Vector q1 = p1.point;
     Vector q2 = p2.point;
     Vector n1 = p1.normal;
     Vector n2 = p2.normal;
 
     Vector n3 = n1.cross(n2);
-    double det = pow(n3.length(), 2);
 
+//    if(n3.cross(Vector(1,0,0)) == Vector(0,0,0))  {
+//        if(n3.cross(Vector(0,0,1)) == Vector(0,0,0))  {
+//            double y = 0;
+//            double z = ((b2/b1)*d1 -d2)/(c2 - c1*b2/b1);
+//            double x = (-c1*z -d1) / b1;
+//        }
+//    }
+    double x = 0;
+    double z = ((b2/b1)*d1 -d2)/(c2 - c1*b2/b1);
+    double y = (-c1*z -d1) / b1;
 
-
-    if(det != 0.0) {
-        Vector outcome = n3;
-        Vector n3xn2 = outcome.cross(n2);
-        Vector n3xn2muld = n3xn2.multpily(-8);
-
-        return {n3, n3xn2muld};
-    }
+    return {n3, Vector(z,y,z)};
 
 }
 
@@ -210,8 +212,8 @@ int main() {
     Plane plane2 = createPlane(Vector(4,0,0), Vector(0,-8,0), Vector(0,0,8));
     Plane plane3 = createPlane(Vector(0,0,-14), Vector(0,-3,-5), Vector(-3,0,-2));
     printf("\n\nzad5");
-    Line intersectionLine = calculateLineBetweenPlanes(plane2, plane3);
-    printf(" found line: %s + t%s", intersectionLine.point.str().c_str(), intersectionLine.vector.str().c_str());
+    Line intersectionLine = calculateLineBetweenPlanes(plane2, plane3, 2, -1, 1, -8, 4, 3, 1, 14); //
+    printf(" found line: %s + t%s", intersectionLine.point.str().c_str(), intersectionLine.vector.normalise().str().c_str());
 
 
     //zad6

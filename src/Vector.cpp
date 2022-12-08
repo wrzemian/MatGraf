@@ -104,6 +104,10 @@ Vector Vector::copy() const {
     return {x, y, z, w};
 }
 
+bool Vector::operator==(const Vector& vec) const {
+    return (x == vec.x && y == vec.y && z == vec.z && w == vec.w);
+}
+
 
 
 

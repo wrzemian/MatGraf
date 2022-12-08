@@ -19,6 +19,8 @@ public:
     Vector(double x, double y, double z);
     Vector(double x, double y, double z, double w);
 
+    bool operator==(const Vector& vec) const;
+
     virtual ~Vector();
 
     std::string str() const;
