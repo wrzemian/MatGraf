@@ -217,7 +217,7 @@ int main() {
 
 
     //zad6
-    double angle3 = plane2.normal.findAngle(plane1.normal);
+    double angle3 = plane2.normal.findAngle(plane3.normal);
     printf("\nzad6 angle: %f", angle3);
 
     //zad7
