@@ -3,8 +3,9 @@
 #include "include/Vector.h"
 #include "include/Matrix.h"
 #include "include/Quaternion.h"
+#include "cmath"
 
-void task1(); void task2(); void task3();
+void task1(); void task2(); void task3(); void task4();
 
 struct Line{
     Vector vector;
@@ -26,6 +27,25 @@ struct Section {
     Vector B;
 };
 
+struct Box {
+    Vector p1;
+    Vector p2;
+    Vector p3;
+    Vector p4;
+    Vector p5;
+    Vector p6;
+    Vector p7;
+    Vector p8;
+    Plane side1;
+    Plane side2;
+    Plane side3;
+    Plane side4;
+    Plane side5;
+    Plane side6;
+};
+
+
+
 
 Line createLine(Vector p1, Vector p2){
     Vector vector = p1.copy();
@@ -44,6 +64,123 @@ Plane createPlane(Vector p1, Vector p2, Vector p3) {
 
     return {vector1.cross(vector3), p2};
 }
+
+Box createBox(Vector a, Vector b, Vector c, Vector d, Vector e ,Vector f, Vector g, Vector h) {
+    Plane acd = createPlane(a, c, d);
+    Plane abe = createPlane(a, b, e);
+    Plane efh = createPlane(e, f, h);
+    Plane cgh = createPlane(c, g, h);
+    Plane ace = createPlane(a, c, e);
+    Plane bdf = createPlane(b, d, f);
+    return {a, b, c, d, e, f, g, h, acd, abe, efh, cgh, ace, bdf};
+}
+
+double calculateTLinePlane(Line l1, Plane p1) {
+    Vector p = l1.point;
+    Vector q = p1.point;
+    Vector v = l1.vector;
+    Vector n = p1.normal;
+
+    Vector minusN = n.multpily(-1);
+    p.sub(q);
+    double numerator = minusN.dot(p);
+    double divisor = n.dot(v);
+
+    if(divisor == 0){
+        throw std::invalid_argument( "divisor is equal 0" );
+    }
+
+    return numerator / divisor;
+
+}
+
+Vector calculateIntersectionLinePlane(const Line& l, const Plane& p) {
+    try {
+        double t = calculateTLinePlane(l, p);
+
+        Vector point = l.point;
+        Vector vector = l.vector;
+
+        point.add(vector.multpily(t));
+        return point;
+    }
+    catch (const std::invalid_argument& e) {
+        throw std::invalid_argument( "point does not exist" );
+    }
+}
+
+
+
+
+
+Vector calculateIntersectionSectionSection(const Section& s1, const Section& s2);
+Vector calculateIntersectionSectionSection(const Section& s1, const Section& s2);
+Vector calculateIntersectionLineLine(const Line& l1, const Line& l2);
+Line calculateLineBetweenPlanes(const Plane& p1, const Plane& p2, double a1 = 2, double b1 = -1, double c1 =  1, double d1 = -8, double a2 = 4, double b2 = 3, double c2 = 1, double d2 = 14);
+void calculateIntersectionSphereLine(const Line& l, const Sphere& s);
+
+
+
+
+int main() {
+    Box box = createBox(Vector(15,15,15), Vector(15,15,-15),
+                        Vector(15,-15,15), Vector(15,-15,-15),
+                        Vector(-15,15,15), Vector(-15,15,-15),
+                        Vector(-15,-15,15), Vector(-15,-15,-15));
+    Line line = createLine(Vector(0,0,0), Vector(0,-15,0));
+    Vector point = calculateIntersectionLinePlane(line, box.side1);
+    if(std::isinf(point.getY())){
+        printf("\n\nHUJ");
+
+    }
+    printf("\n\nzad3 point: %s", point.str().c_str());
+
+    return 0;
+}
+
+void task4() {
+    //zad1
+    Line line1 = createLine(Vector(-2,4,0), Vector(1,5,5));
+    Line line2 = createLine(Vector(-2,4,0), Vector(-1,-1,3));
+
+    printf("zad1 point: %s", calculateIntersectionLineLine(line1, line2).str().c_str());
+
+    //zad2
+    double angle = line1.vector.findAngle(line2.vector);
+    printf("\nzad2 angle: %f", angle);
+
+    //zad3
+    Line line3 = createLine(Vector(-2,2,-1), Vector(1,1,1));
+    Plane plane1 = createPlane(Vector(4,0,0), Vector(1,0,2), Vector(1,2,0));
+    printf("\n\nzad3 point: %s", calculateIntersectionLinePlane(line3, plane1).str().c_str());
+
+    //zad4
+    double angle2 = line3.vector.findAngle(plane1.normal);
+    printf("\nzad4 angle: %f", angle2);
+
+    //zad5
+    Plane plane2 = createPlane(Vector(4,0,0), Vector(0,-8,0), Vector(0,0,8));
+    Plane plane3 = createPlane(Vector(0,0,-14), Vector(0,-3,-5), Vector(-3,0,-2));
+    printf("\n\nzad5");
+    Line intersectionLine = calculateLineBetweenPlanes(plane2, plane3, 2, -1, 1, -8, 4, 3, 1, 14); //
+    printf(" found line: %s + t%s", intersectionLine.point.str().c_str(), intersectionLine.vector.normalise().str().c_str());
+
+
+    //zad6
+    double angle3 = plane2.normal.findAngle(plane3.normal);
+    printf("\nzad6 angle: %f", angle3);
+
+    //zad7
+    Section section1 = {Vector(5,5,4), Vector(10,10,6)};
+    Section section2 = {Vector(5,5,5), Vector(10,10,3)};
+    printf("\n\nzad 7 point: %s", calculateIntersectionSectionSection(section1, section2).str().c_str());
+
+    //zad8
+    Line line4 = createLine(Vector(5,3,-4),Vector(3,-1,-2));
+    Sphere sphere1 = {Vector(0,0,0), sqrt(26)};
+    calculateIntersectionSphereLine(line4, sphere1);
+}
+
 
 double calculateTLineLine(Line l1, Line l2) {
     Vector p1 = l1.point;
@@ -96,32 +233,7 @@ Vector calculateIntersectionSectionSection(const Section& s1, const Section& s2)
         return p;
 }
 
-
-double calculateTLinePlane(Line l1, Plane p1) {
-    Vector p = l1.point;
-    Vector q = p1.point;
-    Vector v = l1.vector;
-    Vector n = p1.normal;
-
-    Vector minusN = n.multpily(-1);
-    p.sub(q);
-    double numerator = minusN.dot(p);
-    double divisor = n.dot(v);
-
-    return numerator / divisor;
-}
-
-Vector calculateIntersectionLinePlane(const Line& l, const Plane& p) {
-    double t = calculateTLinePlane(l, p);
-
-    Vector point = l.point;
-    Vector vector = l.vector;
-
-    point.add(vector.multpily(t));
-    return point;
-}
-
-Line calculateLineBetweenPlanes(const Plane& p1, const Plane& p2, double a1 = 2, double b1 = -1, double c1 =  1, double d1 = -8, double a2 = 4, double b2 = 3, double c2 = 1, double d2 = 14){
+Line calculateLineBetweenPlanes(const Plane& p1, const Plane& p2, double a1, double b1, double c1, double d1, double a2, double b2, double c2, double d2){
     Vector q1 = p1.point;
     Vector q2 = p2.point;
     Vector n1 = p1.normal;
@@ -185,52 +297,6 @@ void calculateIntersectionSphereLine(const Line& l, const Sphere& s) {
     else {
         printf("\n\nzad8 there are no intersections");
     }
-}
-
-
-int main() {
-    //zad1
-    Line line1 = createLine(Vector(-2,4,0), Vector(1,5,5));
-    Line line2 = createLine(Vector(-2,4,0), Vector(-1,-1,3));
-
-    printf("zad1 point: %s", calculateIntersectionLineLine(line1, line2).str().c_str());
-
-    //zad2
-    double angle = line1.vector.findAngle(line2.vector);
-    printf("\nzad2 angle: %f", angle);
-
-    //zad3
-    Line line3 = createLine(Vector(-2,2,-1), Vector(1,1,1));
-    Plane plane1 = createPlane(Vector(4,0,0), Vector(1,0,2), Vector(1,2,0));
-    printf("\n\nzad3 point: %s", calculateIntersectionLinePlane(line3, plane1).str().c_str());
-
-    //zad4
-    double angle2 = line3.vector.findAngle(plane1.normal);
-    printf("\nzad4 angle: %f", angle2);
-
-    //zad5
-    Plane plane2 = createPlane(Vector(4,0,0), Vector(0,-8,0), Vector(0,0,8));
-    Plane plane3 = createPlane(Vector(0,0,-14), Vector(0,-3,-5), Vector(-3,0,-2));
-    printf("\n\nzad5");
-    Line intersectionLine = calculateLineBetweenPlanes(plane2, plane3, 2, -1, 1, -8, 4, 3, 1, 14); //
-    printf(" found line: %s + t%s", intersectionLine.point.str().c_str(), intersectionLine.vector.normalise().str().c_str());
-
-
-    //zad6
-    double angle3 = plane2.normal.findAngle(plane3.normal);
-    printf("\nzad6 angle: %f", angle3);
-
-    //zad7
-    Section section1 = {Vector(5,5,4), Vector(10,10,6)};
-    Section section2 = {Vector(5,5,5), Vector(10,10,3)};
-    printf("\n\nzad 7 point: %s", calculateIntersectionSectionSection(section1, section2).str().c_str());
-
-    //zad8
-    Line line4 = createLine(Vector(5,3,-4),Vector(3,-1,-2));
-    Sphere sphere1 = {Vector(0,0,0), sqrt(26)};
-    calculateIntersectionSphereLine(line4, sphere1);
-
-    return 0;
 }
 
 
@@ -406,3 +472,4 @@ void task3() {
     Vector rotated = Quaternion::rotate(point, angle, rotationAxis);
     printf("\n\nrotated point: \n%s", rotated.str().c_str());
 }
+
