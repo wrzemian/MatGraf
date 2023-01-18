@@ -6,6 +6,7 @@
 #include "include/Matrix.h"
 #include "include/Quaternion.h"
 #include "cmath"
+#include <algorithm>
 
 void task1(); void task2(); void task3(); void task4();
 
@@ -131,88 +132,131 @@ Vector calculateIntersectionLinePlane(const Line& l, const Plane& p) {
         return {2137, 2137, 2137};
     }
 }
-double dFormula(double xp, double yp, double x1, double y1, double x2, double y2) {
-    return (x2 - x1) * (yp - y1) - (x2 - x1) * (yp - y1) - (xp - x1) * (y2 - y1);
-}
-bool checkWallYZ(Vector point, Vector a, Vector b, Vector c, Vector d) {
-    double edge1 = dFormula(point.getY(), point.getZ(), b.getY(), b.getZ(), a.getY(), a.getZ());
-    double edge2 = dFormula(point.getY(), point.getZ(), a.getY(), a.getZ(), d.getY(), d.getZ());
-    double edge3 = dFormula(point.getY(), point.getZ(), d.getY(), d.getZ(), c.getY(), c.getZ());
-    double edge4 = dFormula(point.getY(), point.getZ(), c.getY(), c.getZ(), b.getY(), b.getZ());
-    //std::cout << "\n\n1 :" << edge1 << "2 :" << edge2 << "3 :" << edge3 << "4 :" << edge4;
-    if( edge1 <= 0 && edge2 <= 0 && edge3 <= 0 && edge4 <= 0)
-        return true;
-    else
-        return false;
+
+struct vec2D {
+    double x;
+    double y;
+};
+
+vec2D createVec2D( double x, double y) {
+    return {x, y};
 }
 
-bool checkIfInsideWall(int i, Vector point, const Box& b) {
+vec2D vectorise(vec2D p1, vec2D p2) {
+    return {p2.x - p1.x, p2.y - p1.y};
+}
+
+double dot(vec2D u, vec2D v) {
+    return u.x * v.x + u.y * v.y;
+}
+
+
+bool pointInRectangleXY(Vector a, Vector b, Vector c, Vector point ) {
+    vec2D A = createVec2D(    a.getX(),     a.getY());
+    vec2D B = createVec2D(    b.getX(),     b.getY());
+    vec2D C = createVec2D(    c.getX(),     c.getY());
+    vec2D m = createVec2D(point.getX(), point.getY());
+
+    vec2D AB = vectorise(A, B);
+    vec2D AM = vectorise(A, m);
+    vec2D AC = vectorise(A, C);
+    double dotABAM = dot(AB, AM);
+    double dotABAB = dot(AB, AB);
+    double dotAMAC = dot(AM, AC);
+    double dotACAC = dot(AC, AC);
+    return (0 <= dotABAM && dotABAM <= dotABAB && 0 <= dotAMAC && dotAMAC <= dotACAC);
+}
+
+bool pointInRectangleYZ(Vector a, Vector b, Vector c, Vector point ) {
+    vec2D A = createVec2D(    a.getY(),     a.getZ());
+    vec2D B = createVec2D(    b.getY(),     b.getZ());
+    vec2D C = createVec2D(    c.getY(),     c.getZ());
+    vec2D m = createVec2D(point.getY(), point.getZ());
+
+    vec2D AB = vectorise(A, B);
+    vec2D AM = vectorise(A, m);
+    vec2D AC = vectorise(A, C);
+    double dotABAM = dot(AB, AM);
+    double dotABAB = dot(AB, AB);
+    double dotAMAC = dot(AM, AC);
+    double dotACAC = dot(AC, AC);
+    return (0 <= dotABAM && dotABAM <= dotABAB && 0 <= dotAMAC && dotAMAC <= dotACAC);
+}
+
+bool pointInRectangleXZ(Vector a, Vector b, Vector c, Vector point ) {
+    vec2D A = createVec2D(    a.getX(),     a.getZ());
+    vec2D B = createVec2D(    b.getX(),     b.getZ());
+    vec2D C = createVec2D(    c.getX(),     c.getZ());
+    vec2D m = createVec2D(point.getX(), point.getZ());
+
+    vec2D AB = vectorise(A, B);
+    vec2D AM = vectorise(A, m);
+    vec2D AC = vectorise(A, C);
+    double dotABAM = dot(AB, AM);
+    double dotABAB = dot(AB, AB);
+    double dotAMAC = dot(AM, AC);
+    double dotACAC = dot(AC, AC);
+    return (0 <= dotABAM && dotABAM <= dotABAB && 0 <= dotAMAC && dotAMAC <= dotACAC);
+}
+
+std::string checkIfInsideWall(int i, Vector point, const Box& b) {
     switch (i) {
-//        case 0:
-//            if( b.a.getY() >= point.getY() &&
-//                point.getY() >= b.d.getY() &&
-//                b.a.getZ() >= point.getZ()  &&
-//                point.getZ() >= b.d.getZ() ) {
-//                return true;
-//            } else {
-//                return false;
-//            }
-//        case 1:
-//            if( b.a.getX() >= point.getX() &&
-//                point.getX() >= b.f.getX() &&
-//                b.a.getZ() >= point.getZ() &&
-//                point.getZ() >= b.f.getZ() ) {
-//                return true;
-//            } else {
-//                return false;
-//            }
+        case 0:
+            //std::cout<<"YZ abcd\n";
+            if(pointInRectangleYZ( b.a, b.b, b.c, point))
+                return "0";
+            else
+                return ".";
+        case 1:
+            ////GOOD
+            if(pointInRectangleXZ( b.a, b.b, b.e, point))
+                return "1";
+            else
+                return ".";
         case 2:
-            return checkWallYZ(point, b.e, b.f, b.g, b.h);
-//        case 3:
-//            if( b.c.getX() >= point.getX() &&
-//                point.getX() >= b.h.getX() &&
-//                b.c.getZ() >= point.getZ() &&
-//                point.getZ() >= b.h.getZ() ) {
-//                return true;
-//            } else {
-//                return false;
-//            }
-//        case 4:
-//            if( b.a.getX() >= point.getX() &&
-//                point.getX() >= b.g.getX() &&
-//                b.a.getY() >= point.getY() &&
-//                point.getY() >= b.g.getY() ) {
-//                return true;
-//            } else {
-//                return false;
-//            }
-//        case 5:
-//            if( b.b.getX() >= point.getX() &&
-//                point.getX()>= b.h.getX() &&
-//                b.b.getY() >= point.getY() &&
-//                point.getY() >= b.h.getY() ) {
-//                return true;
-//            } else {
-//                return false;
-//            }
-
-
+            //std::cout<<"YZ efgh\n";
+            if(pointInRectangleYZ( b.e, b.f, b.g, point))
+                return "2";
+            else
+                return ".";
+        case 3:
+            ////GOOD
+            if(pointInRectangleXZ( b.d, b.g, b.h, point))
+                return "3";
+            else
+                return ".";
+        case 4:
+            //std::cout<<"XY aceg\n";
+            if(pointInRectangleXY( b.c, b.g, b.a, point))
+                return "4";
+            else
+                return ".";
+        case 5:
+            //std::cout<<"XY bdfh\n";
+            if(pointInRectangleXY( b.b, b.d, b.f, point))
+                return "5";
+            else
+                return ".";
+        default:
+            return ".";
     }
 }
 
-bool collidesWithBox(const Box& b, const Line& l) {
+std::string collidesWithBox(const Box& b, const Line& l) {
     Vector test = Vector(0,0,0);
+    std::string temp = "";
     for (int i=0; i<6; i++) {
         test = calculateIntersectionLinePlane(l, b.planes.at(i));
         if(!test.equals(Vector(2137,2137,2137))) {
-            if(checkIfInsideWall(i, test, b)) {
+             temp = checkIfInsideWall(i, test, b);
+            if( temp != ".") {
 
-                return true;
+                return temp;
             }
         }
     }
     //std::cout<<"kiedys sie wykonalem";
-    return false;
+    return ".";
 
 }
 
@@ -255,7 +299,9 @@ int main() {
                         Vector(15,-15,15), Vector(15,-15,-15),
                         Vector(-15,15,15), Vector(-15,15,-15),
                         Vector(-15,-15,15), Vector(-15,-15,-15));
-    Box rotatedBox = rotateBox(box, -45, Vector(1,0,0));
+    Box box1 = rotateBox(box, 45, Vector(1,0,0));
+
+    Box box2 = rotateBox(box, 90, Vector(0,1,0));
     //Line line = createLine(Vector(0,0,0), Vector(0,-15,0));
     Line lineArr[60][60];
     int y = 30;
@@ -271,26 +317,19 @@ int main() {
         z--;
     }
 
-    bool resultArr[60][60];
+    std::string resultArr[60][60];
     for (int i = 0; i < 60; i++) {
         for (int j = 0; j < 60; j++) {
-            resultArr[i][j] = collidesWithBox(box, lineArr[i][j]);
+            resultArr[i][j] = collidesWithBox(box2, lineArr[i][j]);
         }
     }
 
     std::stringstream ss;
     for (int i = 0; i < 60; i++) {
         for (int j = 0; j < 60; j++) {
-            if(resultArr[i][j]) {
-                ss<<" 0";
-            }
-            else {
-                ss<<" .";
-            }
+            ss<<" " << resultArr[i][j];
         }
-        //ss<<"\n";
     }
-    std::cout << std::setw(50);
     std::cout<<ss.str();
 
     return 0;
