@@ -1,5 +1,7 @@
 #include <cstdio>
 #include <string>
+#include <vector>
+#include <iomanip>
 #include "include/Vector.h"
 #include "include/Matrix.h"
 #include "include/Quaternion.h"
@@ -8,6 +10,12 @@
 void task1(); void task2(); void task3(); void task4();
 
 struct Line{
+    Line() : point(point), vector(vector) {
+    }
+
+    Line(Vector p, Vector v) : point(p), vector(v) {
+    }
+
     Vector vector;
     Vector point;
 };
@@ -28,30 +36,38 @@ struct Section {
 };
 
 struct Box {
-    Vector p1;
-    Vector p2;
-    Vector p3;
-    Vector p4;
-    Vector p5;
-    Vector p6;
-    Vector p7;
-    Vector p8;
-    Plane side1;
-    Plane side2;
-    Plane side3;
-    Plane side4;
-    Plane side5;
-    Plane side6;
+    Vector a;
+    Vector b;
+    Vector c;
+    Vector d;
+    Vector e;
+    Vector f;
+    Vector g;
+    Vector h;
+    std::vector <Plane> planes;
+//    Plane abcd; 0
+//    Plane abef; 1
+//    Plane efgh; 2
+//    Plane cdgh; 3
+//    Plane aceg; 4
+//    Plane bdfh; 5
+
+//    a Vector(15,15,15)
+//    b Vector(15,15,-15)
+//    c Vector(15,-15,15)
+//    d Vector(15,-15,-15)
+//    e Vector(-15,15,15)
+//    f Vector(-15,15,-15)
+//    g Vector(-15,-15,15)
+//    h Vector(-15,-15,-15)
 };
-
-
 
 
 Line createLine(Vector p1, Vector p2){
     Vector vector = p1.copy();
     vector.sub(p2);
 
-    return {vector, p2};
+    return {p2, vector};
 }
 
 Plane createPlane(Vector p1, Vector p2, Vector p3) {
@@ -72,7 +88,14 @@ Box createBox(Vector a, Vector b, Vector c, Vector d, Vector e ,Vector f, Vector
     Plane cgh = createPlane(c, g, h);
     Plane ace = createPlane(a, c, e);
     Plane bdf = createPlane(b, d, f);
-    return {a, b, c, d, e, f, g, h, acd, abe, efh, cgh, ace, bdf};
+    std::vector <Plane> planes;
+    planes.push_back(acd);
+    planes.push_back(abe);
+    planes.push_back(efh);
+    planes.push_back(cgh);
+    planes.push_back(ace);
+    planes.push_back(bdf);
+    return {a, b, c, d, e, f, g, h, planes};
 }
 
 double calculateTLinePlane(Line l1, Plane p1) {
@@ -105,12 +128,87 @@ Vector calculateIntersectionLinePlane(const Line& l, const Plane& p) {
         return point;
     }
     catch (const std::invalid_argument& e) {
-        throw std::invalid_argument( "point does not exist" );
+        return {2137, 2137, 2137};
     }
 }
 
+bool checkIfInsideWall(int i, Vector point, const Box& b) {
+    switch (i) {
+        case 0:
+            if( b.a.getY() >= point.getY() &&
+                point.getY() >= b.d.getY() &&
+                b.a.getZ() >= point.getZ()  &&
+                point.getZ() >= b.d.getZ() ) {
+                return true;
+            } else {
+                return false;
+            }
+        case 1:
+            std::cout<<"1";
+            if( b.a.getX() >= point.getX() &&
+                point.getX() >= b.f.getX() &&
+                b.a.getZ() >= point.getZ() &&
+                point.getZ() >= b.f.getZ() ) {
+                return true;
+            } else {
+                return false;
+            }
+        case 2:
+            if( b.e.getY() >= point.getY() &&
+                point.getY() >= b.h.getY() &&
+                b.e.getZ() >= point.getZ() &&
+                point.getZ() >= b.h.getZ() ) {
+                return true;
+            } else {
+                return false;
+            }
+        case 3:
+            if( b.c.getX() >= point.getX() &&
+                point.getX() >= b.h.getX() &&
+                b.c.getZ() >= point.getZ() &&
+                point.getZ() >= b.h.getZ() ) {
+                return true;
+            } else {
+                return false;
+            }
+        case 4:
+            if( b.a.getX() >= point.getX() &&
+                point.getX() >= b.g.getX() &&
+                b.a.getY() >= point.getY() &&
+                point.getY() >= b.g.getY() ) {
+                return true;
+            } else {
+                return false;
+            }
+        case 5:
+            if( b.b.getX() >= point.getX() &&
+                point.getX()>= b.h.getX() &&
+                b.b.getY() >= point.getY() &&
+                point.getY() >= b.h.getY() ) {
+                return true;
+            } else {
+                return false;
+            }
 
 
+    }
+}
+
+bool collidesWithBox(const Box& b, const Line& l) {
+    Vector test = Vector(0,0,0);
+    for (int i=0; i<6; i++) {
+        test = calculateIntersectionLinePlane(l, b.planes.at(i));
+        if(!test.equals(Vector(2137,2137,2137))) {
+            if(checkIfInsideWall(i, test, b)) {
+
+                return true;
+            }
+        }
+    }
+    //std::cout<<"kiedys sie wykonalem";
+    return false;
+
+}
 
 
 Vector calculateIntersectionSectionSection(const Section& s1, const Section& s2);
@@ -121,19 +219,48 @@ void calculateIntersectionSphereLine(const Line& l, const Sphere& s);
 
 
 
-
 int main() {
     Box box = createBox(Vector(15,15,15), Vector(15,15,-15),
                         Vector(15,-15,15), Vector(15,-15,-15),
                         Vector(-15,15,15), Vector(-15,15,-15),
                         Vector(-15,-15,15), Vector(-15,-15,-15));
-    Line line = createLine(Vector(0,0,0), Vector(0,-15,0));
-    Vector point = calculateIntersectionLinePlane(line, box.side1);
-    if(std::isinf(point.getY())){
-        printf("\n\nHUJ");
 
+    //Line line = createLine(Vector(0,0,0), Vector(0,-15,0));
+    Line lineArr[60][60];
+    int y = 30;
+    int z = 30;
+    for (int i = 0; i < 60; i++) {
+        for (int j = 0; j < 60; j++) {
+            lineArr[i][j] = createLine(Vector(-30,y,z), Vector(30,y,z));
+            //std::cout<<"POINT x: "<<lineArr[i][j].point.getX()<<" y: "<<lineArr[i][j].point.getY()<<" z: "<<lineArr[i][j].point.getZ()<<"\n";
+            //std::cout<<"VECTORx: "<<lineArr[i][j].vector.getX()<<" y: "<<lineArr[i][j].vector.getY()<<" z: "<<lineArr[i][j].vector.getZ()<<"\n";
+            y--;
+        }
+        y = 30;
+        z--;
     }
-    printf("\n\nzad3 point: %s", point.str().c_str());
+
+    bool resultArr[60][60];
+    for (int i = 0; i < 60; i++) {
+        for (int j = 0; j < 60; j++) {
+            resultArr[i][j] = collidesWithBox(box, lineArr[i][j]);
+        }
+    }
+
+    std::stringstream ss;
+    for (int i = 0; i < 60; i++) {
+        for (int j = 0; j < 60; j++) {
+            if(resultArr[i][j]) {
+                ss<<" 0";
+            }
+            else {
+                ss<<" .";
+            }
+        }
+        //ss<<"\n";
+    }
+    std::cout << std::setw(50);
+    std::cout<<ss.str();
 
     return 0;
 }
@@ -252,7 +379,7 @@ Line calculateLineBetweenPlanes(const Plane& p1, const Plane& p2, double a1, dou
     double z = ((b2/b1)*d1 -d2)/(c2 - c1*b2/b1);
     double y = (-c1*z -d1) / b1;
 
-    return {n3, Vector(z,y,z)};
+    return {};
 
 }
 
