@@ -36,33 +36,44 @@ struct Section {
     Vector B;
 };
 
-struct Box {
+//struct Box {
+//    Vector a;
+//    Vector b;
+//    Vector c;
+//    Vector d;
+//    Vector e;
+//    Vector f;
+//    Vector g;
+//    Vector h;
+//    std::vector <Plane> planes;
+////    Plane abcd; 0
+////    Plane abef; 1
+////    Plane efgh; 2
+////    Plane cdgh; 3
+////    Plane aceg; 4
+////    Plane bdfh; 5
+//
+////    a Vector(15,15,15)
+////    b Vector(15,15,-15)
+////    c Vector(15,-15,15)
+////    d Vector(15,-15,-15)
+////    e Vector(-15,15,15)
+////    f Vector(-15,15,-15)
+////    g Vector(-15,-15,15)
+////    h Vector(-15,-15,-15)
+//};
+
+struct Wall {
     Vector a;
     Vector b;
     Vector c;
     Vector d;
-    Vector e;
-    Vector f;
-    Vector g;
-    Vector h;
-    std::vector <Plane> planes;
-//    Plane abcd; 0
-//    Plane abef; 1
-//    Plane efgh; 2
-//    Plane cdgh; 3
-//    Plane aceg; 4
-//    Plane bdfh; 5
-
-//    a Vector(15,15,15)
-//    b Vector(15,15,-15)
-//    c Vector(15,-15,15)
-//    d Vector(15,-15,-15)
-//    e Vector(-15,15,15)
-//    f Vector(-15,15,-15)
-//    g Vector(-15,-15,15)
-//    h Vector(-15,-15,-15)
+    Plane plane;
 };
 
+struct Box {
+    std::vector <Wall> walls;
+};
 
 Line createLine(Vector p1, Vector p2){
     Vector vector = p1.copy();
@@ -82,22 +93,22 @@ Plane createPlane(Vector p1, Vector p2, Vector p3) {
     return {vector1.cross(vector3), p2};
 }
 
-Box createBox(Vector a, Vector b, Vector c, Vector d, Vector e ,Vector f, Vector g, Vector h) {
-    Plane acd = createPlane(a, c, d);
-    Plane abe = createPlane(a, b, e);
-    Plane efh = createPlane(e, f, h);
-    Plane cgh = createPlane(c, g, h);
-    Plane ace = createPlane(a, c, e);
-    Plane bdf = createPlane(b, d, f);
-    std::vector <Plane> planes;
-    planes.push_back(acd);
-    planes.push_back(abe);
-    planes.push_back(efh);
-    planes.push_back(cgh);
-    planes.push_back(ace);
-    planes.push_back(bdf);
-    return {a, b, c, d, e, f, g, h, planes};
-}
+//Box createBox(Vector a, Vector b, Vector c, Vector d, Vector e ,Vector f, Vector g, Vector h) {
+//    Plane acd = createPlane(a, c, d);
+//    Plane abe = createPlane(a, b, e);
+//    Plane efh = createPlane(e, f, h);
+//    Plane cgh = createPlane(c, g, h);
+//    Plane ace = createPlane(a, c, e);
+//    Plane bdf = createPlane(b, d, f);
+//    std::vector <Plane> planes;
+//    planes.push_back(acd);
+//    planes.push_back(abe);
+//    planes.push_back(efh);
+//    planes.push_back(cgh);
+//    planes.push_back(ace);
+//    planes.push_back(bdf);
+//    return {a, b, c, d, e, f, g, h, planes};
+//}
 
 double calculateTLinePlane(Line l1, Plane p1) {
     Vector p = l1.point;
@@ -199,57 +210,177 @@ bool pointInRectangleXZ(Vector a, Vector b, Vector c, Vector point ) {
     return (0 <= dotABAM && dotABAM <= dotABAB && 0 <= dotAMAC && dotAMAC <= dotACAC);
 }
 
-std::string checkIfInsideWall(int i, Vector point, const Box& b) {
-    switch (i) {
-        case 0:
-            //std::cout<<"YZ abcd\n";
-            if(pointInRectangleYZ( b.a, b.b, b.c, point))
-                return "0";
+//std::string checkIfInsideWall(int i, Vector point, const Box& b) {
+//    switch (i) {
+//        case 0:
+//            //std::cout<<"YZ abcd\n";
+//            if(pointInRectangleYZ( b.a, b.b, b.c, point))
+//                return "0";
+//            else
+//                return ".";
+//        case 1:
+//            ////GOOD
+//            if(pointInRectangleXZ( b.a, b.b, b.e, point))
+//                return "1";
+//            else
+//                return ".";
+//        case 2:
+//            //std::cout<<"YZ efgh\n";
+//            if(pointInRectangleYZ( b.e, b.f, b.g, point))
+//                return "2";
+//            else
+//                return ".";
+//        case 3:
+//            ////GOOD
+//            if(pointInRectangleXZ( b.d, b.g, b.h, point))
+//                return "3";
+//            else
+//                return ".";
+//        case 4:
+//            //std::cout<<"XY aceg\n";
+//            if(pointInRectangleXY( b.c, b.g, b.a, point))
+//                return "4";
+//            else
+//                return ".";
+//        case 5:
+//            //std::cout<<"XY bdfh\n";
+//            if(pointInRectangleXY( b.b, b.d, b.f, point))
+//                return "5";
+//            else
+//                return ".";
+//        default:
+//            return ".";
+//    }
+//}
+
+
+
+//std::string collidesWithBox(const Box& b, const Line& l) {
+//    Vector test = Vector(0,0,0);
+//    std::string temp = "";
+//    for (int i=0; i<6; i++) {
+//        test = calculateIntersectionLinePlane(l, b.planes.at(i));
+//        if(!test.equals(Vector(2137,2137,2137))) {
+//             temp = checkIfInsideWall(i, test, b);
+//            if( temp != ".") {
+//
+//                return temp;
+//            }
+//        }
+//    }
+//    //std::cout<<"kiedys sie wykonalem";
+//    return ".";
+//
+//}
+
+
+
+
+Vector calculateIntersectionSectionSection(const Section& s1, const Section& s2);
+Vector calculateIntersectionSectionSection(const Section& s1, const Section& s2);
+Vector calculateIntersectionLineLine(const Line& l1, const Line& l2);
+Line calculateLineBetweenPlanes(const Plane& p1, const Plane& p2, double a1 = 2, double b1 = -1, double c1 =  1, double d1 = -8, double a2 = 4, double b2 = 3, double c2 = 1, double d2 = 14);
+void calculateIntersectionSphereLine(const Line& l, const Sphere& s);
+
+//Box rotateBox(Box box, double angle, const Vector& axis) {
+//    Vector a = Quaternion::rotate(box.a, angle, axis);
+//    Vector b = Quaternion::rotate(box.b, angle, axis);
+//    Vector c = Quaternion::rotate(box.c, angle, axis);
+//    Vector d = Quaternion::rotate(box.d, angle, axis);
+//    Vector e = Quaternion::rotate(box.e, angle, axis);
+//    Vector f = Quaternion::rotate(box.f, angle, axis);
+//    Vector g = Quaternion::rotate(box.g, angle, axis);
+//    Vector h = Quaternion::rotate(box.h, angle, axis);
+//    Plane acd = createPlane(a, c, d);
+//    Plane abe = createPlane(a, b, e);
+//    Plane efh = createPlane(e, f, h);
+//    Plane cgh = createPlane(c, g, h);
+//    Plane ace = createPlane(a, c, e);
+//    Plane bdf = createPlane(b, d, f);
+//    std::vector <Plane> planes;
+//    planes.push_back(acd);
+//    planes.push_back(abe);
+//    planes.push_back(efh);
+//    planes.push_back(cgh);
+//    planes.push_back(ace);
+//    planes.push_back(bdf);
+//    return {a,b,c,d,e,f,g,h,planes};
+//}
+
+
+Wall createWall(Vector a, Vector b, Vector c, Vector d) {
+    Plane abcd = createPlane(a, b, c);
+    return {a,b,c,d, abcd};
+}
+bool checkIfInside(Vector point, const Wall& w) {
+
+            if (pointInRectangleYZ(w.a, w.b, w.c, point))
+                return true;
             else
-                return ".";
-        case 1:
-            ////GOOD
-            if(pointInRectangleXZ( b.a, b.b, b.e, point))
-                return "1";
-            else
-                return ".";
-        case 2:
-            //std::cout<<"YZ efgh\n";
-            if(pointInRectangleYZ( b.e, b.f, b.g, point))
-                return "2";
-            else
-                return ".";
-        case 3:
-            ////GOOD
-            if(pointInRectangleXZ( b.d, b.g, b.h, point))
-                return "3";
-            else
-                return ".";
-        case 4:
-            //std::cout<<"XY aceg\n";
-            if(pointInRectangleXY( b.c, b.g, b.a, point))
-                return "4";
-            else
-                return ".";
-        case 5:
-            //std::cout<<"XY bdfh\n";
-            if(pointInRectangleXY( b.b, b.d, b.f, point))
-                return "5";
-            else
-                return ".";
-        default:
-            return ".";
-    }
+                return false;
+
 }
 
-std::string collidesWithBox(const Box& b, const Line& l) {
+bool collidesWithWall(const Wall& w, const Line& l) {
     Vector test = Vector(0,0,0);
     std::string temp = "";
     for (int i=0; i<6; i++) {
-        test = calculateIntersectionLinePlane(l, b.planes.at(i));
+        test = calculateIntersectionLinePlane(l, w.plane);
         if(!test.equals(Vector(2137,2137,2137))) {
-             temp = checkIfInsideWall(i, test, b);
-            if( temp != ".") {
+            if(checkIfInside(test, w)) {
+
+                return true;
+            }
+        }
+    }
+    //std::cout<<"kiedys sie wykonalem";
+    return false;
+
+}
+
+Wall rotateWall(Wall w, double angle, const Vector& axis) {
+    Vector a = Quaternion::rotate(w.a, angle, axis);
+    Vector b = Quaternion::rotate(w.b, angle, axis);
+    Vector c = Quaternion::rotate(w.c, angle, axis);
+    Vector d = Quaternion::rotate(w.d, angle, axis);
+    Plane abcd = createPlane(a, c, d);
+
+    return{a, b, c, d, abcd};
+}
+
+void rotateWallV(Wall* w, double angle, const Vector& axis) {
+    w->a = Quaternion::rotate(w->a, angle, axis);
+    w->b = Quaternion::rotate(w->b, angle, axis);
+    w->c = Quaternion::rotate(w->c, angle, axis);
+    w->d = Quaternion::rotate(w->d, angle, axis);
+    w->plane = createPlane(w->a, w->c, w->d);
+}
+
+
+Box createBox(Wall w0, Wall w1, Wall w2, Wall w3, Wall w4, Wall w5) {
+    std::vector <Wall> walls;
+    walls.push_back(w0);
+    walls.push_back(w1);
+    walls.push_back(w2);
+    walls.push_back(w3);
+    walls.push_back(w4);
+    walls.push_back(w5);
+    return {walls};
+}
+
+void rotateBox(Box* box, double angle, const Vector& axis) {
+    for (int i =0; i < box->walls.size(); i++){
+        rotateWallV(&box->walls.at(i), angle, axis);
+    }
+}
+std::string collidesWithBox(const Box& box, const Line& l) {
+    Vector test = Vector(0,0,0);
+    std::string temp = "";
+    for (int i=0; i<6; i++) {
+        test = calculateIntersectionLinePlane(l, box.walls.at(i).plane);
+        if(!test.equals(Vector(2137,2137,2137))) {
+            temp = checkIfInside(test, box.walls.at(i));
+            if(temp != ".") {
 
                 return temp;
             }
@@ -259,50 +390,48 @@ std::string collidesWithBox(const Box& b, const Line& l) {
     return ".";
 
 }
+//void rotateWalls(std::vector<Wall> walls, double angle, const Vector& axis) {
+//    for(int i = 0; i < walls.size(); i ++) {
+//        rotateWall(&walls.at(i), angle, axis);
+//    }
+//}
 
-
-Vector calculateIntersectionSectionSection(const Section& s1, const Section& s2);
-Vector calculateIntersectionSectionSection(const Section& s1, const Section& s2);
-Vector calculateIntersectionLineLine(const Line& l1, const Line& l2);
-Line calculateLineBetweenPlanes(const Plane& p1, const Plane& p2, double a1 = 2, double b1 = -1, double c1 =  1, double d1 = -8, double a2 = 4, double b2 = 3, double c2 = 1, double d2 = 14);
-void calculateIntersectionSphereLine(const Line& l, const Sphere& s);
-
-Box rotateBox(Box box, double angle, const Vector& axis) {
-    Vector a = Quaternion::rotate(box.a, angle, axis);
-    Vector b = Quaternion::rotate(box.b, angle, axis);
-    Vector c = Quaternion::rotate(box.c, angle, axis);
-    Vector d = Quaternion::rotate(box.d, angle, axis);
-    Vector e = Quaternion::rotate(box.e, angle, axis);
-    Vector f = Quaternion::rotate(box.f, angle, axis);
-    Vector g = Quaternion::rotate(box.g, angle, axis);
-    Vector h = Quaternion::rotate(box.h, angle, axis);
-    Plane acd = createPlane(a, c, d);
-    Plane abe = createPlane(a, b, e);
-    Plane efh = createPlane(e, f, h);
-    Plane cgh = createPlane(c, g, h);
-    Plane ace = createPlane(a, c, e);
-    Plane bdf = createPlane(b, d, f);
-    std::vector <Plane> planes;
-    planes.push_back(acd);
-    planes.push_back(abe);
-    planes.push_back(efh);
-    planes.push_back(cgh);
-    planes.push_back(ace);
-    planes.push_back(bdf);
-    return {a,b,c,d,e,f,g,h,planes};
-}
-
-
-
+//std::string detectCollisionBox
 int main() {
-    Box box = createBox(Vector(15,15,15), Vector(15,15,-15),
-                        Vector(15,-15,15), Vector(15,-15,-15),
-                        Vector(-15,15,15), Vector(-15,15,-15),
-                        Vector(-15,-15,15), Vector(-15,-15,-15));
-    Box box1 = rotateBox(box, 45, Vector(1,0,0));
+//    Box box = createBox(Vector(15,15,15), Vector(15,15,-15),
+//                        Vector(15,-15,15), Vector(15,-15,-15),
+//                        Vector(-15,15,15), Vector(-15,15,-15),
+//                        Vector(-15,-15,15), Vector(-15,-15,-15));
+//    Box box1 = rotateBox(box, 45, Vector(1,0,0));
+//
+//    Box box2 = rotateBox(box, 90, Vector(0,1,0));
 
-    Box box2 = rotateBox(box, 90, Vector(0,1,0));
-    //Line line = createLine(Vector(0,0,0), Vector(0,-15,0));
+
+
+
+
+
+
+
+    Wall wall = createWall(Vector(15,15,15), Vector(15,15,-15),
+                           Vector(15,-15,15), Vector(15,-15,-15));
+    Wall wall0 = rotateWall(wall, 90, Vector(0,1,0));
+    Wall wall1 = rotateWall(wall, -90, Vector(0,1,0));
+    Wall wall2 = rotateWall(wall, 90, Vector(0,0,1));
+    Wall wall3 = rotateWall(wall, -90, Vector(0,0,1));
+    Wall wall4 = rotateWall(wall, 0, Vector(0,0,1));
+    Wall wall5 = rotateWall(wall, 180, Vector(0,0,1));
+    std::vector<Wall> walls;
+    walls.push_back(wall0);
+    walls.push_back(wall1);
+    walls.push_back(wall2);
+    walls.push_back(wall3);
+    walls.push_back(wall4);
+    walls.push_back(wall5);
+    //rotateWalls(walls, 45, Vector(1,0,0));
+//    Box box = createBox(wall0, wall1, wall2, wall3, wall4, wall5);
+//    rotateBox(&box, 45, Vector(0,0,1));
+
     Line lineArr[60][60];
     int y = 30;
     int z = 30;
@@ -317,17 +446,47 @@ int main() {
         z--;
     }
 
-    std::string resultArr[60][60];
+    bool resultArr0[60][60];
+    bool resultArr1[60][60];
+    bool resultArr2[60][60];
+    bool resultArr3[60][60];
+    bool resultArr4[60][60];
+    bool resultArr5[60][60];
     for (int i = 0; i < 60; i++) {
         for (int j = 0; j < 60; j++) {
-            resultArr[i][j] = collidesWithBox(box2, lineArr[i][j]);
+            resultArr0[i][j] = collidesWithWall(wall0, lineArr[i][j]);
+            resultArr1[i][j] = collidesWithWall(wall1, lineArr[i][j]);
+            resultArr2[i][j] = collidesWithWall(wall2, lineArr[i][j]);
+            resultArr3[i][j] = collidesWithWall(wall3, lineArr[i][j]);
+            resultArr4[i][j] = collidesWithWall(wall4, lineArr[i][j]);
+            resultArr5[i][j] = collidesWithWall(wall5, lineArr[i][j]);
+            //resultArr[i][j] = collidesWithBox(box, lineArr[i][j]);
         }
     }
-
+    bool resultArr[60][60];
+    for (int i = 0; i < 60; i++) {
+        for (int j = 0; j < 60; j++) {
+            if(resultArr0[i][j])
+                resultArr[i][j] = true;
+            if(resultArr1[i][j])
+                resultArr[i][j] = true;
+            if(resultArr2[i][j])
+                resultArr[i][j] = true;
+            if(resultArr3[i][j])
+                resultArr[i][j] = true;
+            if(resultArr4[i][j])
+                resultArr[i][j] = true;
+            if(resultArr5[i][j])
+                resultArr[i][j] = true;
+        }
+    }
     std::stringstream ss;
     for (int i = 0; i < 60; i++) {
         for (int j = 0; j < 60; j++) {
-            ss<<" " << resultArr[i][j];
+            if(resultArr[i][j])
+                ss<<" 0";
+            else
+                ss<<" .";
         }
     }
     std::cout<<ss.str();
