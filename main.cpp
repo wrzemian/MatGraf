@@ -144,7 +144,6 @@ bool checkIfInsideWall(int i, Vector point, const Box& b) {
                 return false;
             }
         case 1:
-            std::cout<<"1";
             if( b.a.getX() >= point.getX() &&
                 point.getX() >= b.f.getX() &&
                 b.a.getZ() >= point.getZ() &&
@@ -217,6 +216,31 @@ Vector calculateIntersectionLineLine(const Line& l1, const Line& l2);
 Line calculateLineBetweenPlanes(const Plane& p1, const Plane& p2, double a1 = 2, double b1 = -1, double c1 =  1, double d1 = -8, double a2 = 4, double b2 = 3, double c2 = 1, double d2 = 14);
 void calculateIntersectionSphereLine(const Line& l, const Sphere& s);
 
+Box rotateBox(Box box, double angle, const Vector& axis) {
+    Vector a = Quaternion::rotate(box.a, angle, axis);
+    Vector b = Quaternion::rotate(box.b, angle, axis);
+    Vector c = Quaternion::rotate(box.c, angle, axis);
+    Vector d = Quaternion::rotate(box.d, angle, axis);
+    Vector e = Quaternion::rotate(box.e, angle, axis);
+    Vector f = Quaternion::rotate(box.f, angle, axis);
+    Vector g = Quaternion::rotate(box.g, angle, axis);
+    Vector h = Quaternion::rotate(box.h, angle, axis);
+    Plane acd = createPlane(a, c, d);
+    Plane abe = createPlane(a, b, e);
+    Plane efh = createPlane(e, f, h);
+    Plane cgh = createPlane(c, g, h);
+    Plane ace = createPlane(a, c, e);
+    Plane bdf = createPlane(b, d, f);
+    std::vector <Plane> planes;
+    planes.push_back(acd);
+    planes.push_back(abe);
+    planes.push_back(efh);
+    planes.push_back(cgh);
+    planes.push_back(ace);
+    planes.push_back(bdf);
+    return {a,b,c,d,e,f,g,h,planes};
+}
+
 
 
 int main() {
@@ -224,7 +248,7 @@ int main() {
                         Vector(15,-15,15), Vector(15,-15,-15),
                         Vector(-15,15,15), Vector(-15,15,-15),
                         Vector(-15,-15,15), Vector(-15,-15,-15));
-
+    Box rotatedBox = rotateBox(box, -45, Vector(1,0,0));
     //Line line = createLine(Vector(0,0,0), Vector(0,-15,0));
     Line lineArr[60][60];
     int y = 30;
@@ -243,7 +267,7 @@ int main() {
     bool resultArr[60][60];
     for (int i = 0; i < 60; i++) {
         for (int j = 0; j < 60; j++) {
-            resultArr[i][j] = collidesWithBox(box, lineArr[i][j]);
+            resultArr[i][j] = collidesWithBox(rotatedBox, lineArr[i][j]);
         }
     }
 
