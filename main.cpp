@@ -131,63 +131,70 @@ Vector calculateIntersectionLinePlane(const Line& l, const Plane& p) {
         return {2137, 2137, 2137};
     }
 }
+double dFormula(double xp, double yp, double x1, double y1, double x2, double y2) {
+    return (x2 - x1) * (yp - y1) - (x2 - x1) * (yp - y1) - (xp - x1) * (y2 - y1);
+}
+bool checkWallYZ(Vector point, Vector a, Vector b, Vector c, Vector d) {
+    double edge1 = dFormula(point.getY(), point.getZ(), b.getY(), b.getZ(), a.getY(), a.getZ());
+    double edge2 = dFormula(point.getY(), point.getZ(), a.getY(), a.getZ(), d.getY(), d.getZ());
+    double edge3 = dFormula(point.getY(), point.getZ(), d.getY(), d.getZ(), c.getY(), c.getZ());
+    double edge4 = dFormula(point.getY(), point.getZ(), c.getY(), c.getZ(), b.getY(), b.getZ());
+    //std::cout << "\n\n1 :" << edge1 << "2 :" << edge2 << "3 :" << edge3 << "4 :" << edge4;
+    if( edge1 <= 0 && edge2 <= 0 && edge3 <= 0 && edge4 <= 0)
+        return true;
+    else
+        return false;
+}
 
 bool checkIfInsideWall(int i, Vector point, const Box& b) {
     switch (i) {
-        case 0:
-            if( b.a.getY() >= point.getY() &&
-                point.getY() >= b.d.getY() &&
-                b.a.getZ() >= point.getZ()  &&
-                point.getZ() >= b.d.getZ() ) {
-                return true;
-            } else {
-                return false;
-            }
-        case 1:
-            if( b.a.getX() >= point.getX() &&
-                point.getX() >= b.f.getX() &&
-                b.a.getZ() >= point.getZ() &&
-                point.getZ() >= b.f.getZ() ) {
-                return true;
-            } else {
-                return false;
-            }
+//        case 0:
+//            if( b.a.getY() >= point.getY() &&
+//                point.getY() >= b.d.getY() &&
+//                b.a.getZ() >= point.getZ()  &&
+//                point.getZ() >= b.d.getZ() ) {
+//                return true;
+//            } else {
+//                return false;
+//            }
+//        case 1:
+//            if( b.a.getX() >= point.getX() &&
+//                point.getX() >= b.f.getX() &&
+//                b.a.getZ() >= point.getZ() &&
+//                point.getZ() >= b.f.getZ() ) {
+//                return true;
+//            } else {
+//                return false;
+//            }
         case 2:
-            if( b.e.getY() >= point.getY() &&
-                point.getY() >= b.h.getY() &&
-                b.e.getZ() >= point.getZ() &&
-                point.getZ() >= b.h.getZ() ) {
-                return true;
-            } else {
-                return false;
-            }
-        case 3:
-            if( b.c.getX() >= point.getX() &&
-                point.getX() >= b.h.getX() &&
-                b.c.getZ() >= point.getZ() &&
-                point.getZ() >= b.h.getZ() ) {
-                return true;
-            } else {
-                return false;
-            }
-        case 4:
-            if( b.a.getX() >= point.getX() &&
-                point.getX() >= b.g.getX() &&
-                b.a.getY() >= point.getY() &&
-                point.getY() >= b.g.getY() ) {
-                return true;
-            } else {
-                return false;
-            }
-        case 5:
-            if( b.b.getX() >= point.getX() &&
-                point.getX()>= b.h.getX() &&
-                b.b.getY() >= point.getY() &&
-                point.getY() >= b.h.getY() ) {
-                return true;
-            } else {
-                return false;
-            }
+            return checkWallYZ(point, b.e, b.f, b.g, b.h);
+//        case 3:
+//            if( b.c.getX() >= point.getX() &&
+//                point.getX() >= b.h.getX() &&
+//                b.c.getZ() >= point.getZ() &&
+//                point.getZ() >= b.h.getZ() ) {
+//                return true;
+//            } else {
+//                return false;
+//            }
+//        case 4:
+//            if( b.a.getX() >= point.getX() &&
+//                point.getX() >= b.g.getX() &&
+//                b.a.getY() >= point.getY() &&
+//                point.getY() >= b.g.getY() ) {
+//                return true;
+//            } else {
+//                return false;
+//            }
+//        case 5:
+//            if( b.b.getX() >= point.getX() &&
+//                point.getX()>= b.h.getX() &&
+//                b.b.getY() >= point.getY() &&
+//                point.getY() >= b.h.getY() ) {
+//                return true;
+//            } else {
+//                return false;
+//            }
 
 
     }
@@ -267,7 +274,7 @@ int main() {
     bool resultArr[60][60];
     for (int i = 0; i < 60; i++) {
         for (int j = 0; j < 60; j++) {
-            resultArr[i][j] = collidesWithBox(rotatedBox, lineArr[i][j]);
+            resultArr[i][j] = collidesWithBox(box, lineArr[i][j]);
         }
     }
 
