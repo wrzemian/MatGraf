@@ -390,11 +390,13 @@ std::string collidesWithBox(const Box& box, const Line& l) {
     return ".";
 
 }
-//void rotateWalls(std::vector<Wall> walls, double angle, const Vector& axis) {
-//    for(int i = 0; i < walls.size(); i ++) {
-//        rotateWall(&walls.at(i), angle, axis);
-//    }
-//}
+std::vector<Wall> rotateWalls(std::vector<Wall> walls, double angle, const Vector& axis) {
+    std::vector<Wall> output;
+    for(int i = 0; i < walls.size(); i ++) {
+        output.push_back(rotateWall(walls.at(i), angle, axis));
+    }
+    return output;
+}
 
 //std::string detectCollisionBox
 int main() {
@@ -428,7 +430,7 @@ int main() {
     walls.push_back(wall3);
     walls.push_back(wall4);
     walls.push_back(wall5);
-    //rotateWalls(walls, 45, Vector(1,0,0));
+    std::vector<Wall> rotated = rotateWalls(walls, 45, Vector(0,1,1));
 //    Box box = createBox(wall0, wall1, wall2, wall3, wall4, wall5);
 //    rotateBox(&box, 45, Vector(0,0,1));
 
@@ -446,40 +448,14 @@ int main() {
         z--;
     }
 
-    bool resultArr0[60][60];
-    bool resultArr1[60][60];
-    bool resultArr2[60][60];
-    bool resultArr3[60][60];
-    bool resultArr4[60][60];
-    bool resultArr5[60][60];
-    for (int i = 0; i < 60; i++) {
-        for (int j = 0; j < 60; j++) {
-            resultArr0[i][j] = collidesWithWall(wall0, lineArr[i][j]);
-            resultArr1[i][j] = collidesWithWall(wall1, lineArr[i][j]);
-            resultArr2[i][j] = collidesWithWall(wall2, lineArr[i][j]);
-            resultArr3[i][j] = collidesWithWall(wall3, lineArr[i][j]);
-            resultArr4[i][j] = collidesWithWall(wall4, lineArr[i][j]);
-            resultArr5[i][j] = collidesWithWall(wall5, lineArr[i][j]);
-            //resultArr[i][j] = collidesWithBox(box, lineArr[i][j]);
-        }
-    }
     bool resultArr[60][60];
     for (int i = 0; i < 60; i++) {
         for (int j = 0; j < 60; j++) {
-            if(resultArr0[i][j])
-                resultArr[i][j] = true;
-            if(resultArr1[i][j])
-                resultArr[i][j] = true;
-            if(resultArr2[i][j])
-                resultArr[i][j] = true;
-            if(resultArr3[i][j])
-                resultArr[i][j] = true;
-            if(resultArr4[i][j])
-                resultArr[i][j] = true;
-            if(resultArr5[i][j])
-                resultArr[i][j] = true;
+            for(int k = 0; k< rotated.size(); k++)
+            resultArr[i][j] = collidesWithWall(rotated.at(k), lineArr[i][j]);
         }
     }
+
     std::stringstream ss;
     for (int i = 0; i < 60; i++) {
         for (int j = 0; j < 60; j++) {
