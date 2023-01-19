@@ -63,14 +63,6 @@ struct Box {
 //    h Vector(-15,-15,-15)
 };
 
-struct Wall {
-    Vector a;
-    Vector b;
-    Vector c;
-    Vector d;
-    Plane plane;
-};
-
 Line createLine(Vector p1, Vector p2){
     Vector vector = p1.copy();
     vector.sub(p2);
@@ -157,98 +149,6 @@ double dot(vec2D u, vec2D v) {
     return u.x * v.x + u.y * v.y;
 }
 
-
-bool pointInRectangleXY(Vector a, Vector b, Vector c, Vector point ) {
-    vec2D A = createVec2D(    a.getX(),     a.getY());
-    vec2D B = createVec2D(    b.getX(),     b.getY());
-    vec2D C = createVec2D(    c.getX(),     c.getY());
-    vec2D m = createVec2D(point.getX(), point.getY());
-
-    vec2D AB = vectorise(A, B);
-    vec2D AM = vectorise(A, m);
-    vec2D AC = vectorise(A, C);
-    double dotABAM = dot(AB, AM);
-    double dotABAB = dot(AB, AB);
-    double dotAMAC = dot(AM, AC);
-    double dotACAC = dot(AC, AC);
-    return (0 <= dotABAM && dotABAM <= dotABAB && 0 <= dotAMAC && dotAMAC <= dotACAC);
-}
-
-bool pointInRectangleYZ(Vector a, Vector b, Vector c, Vector point ) {
-    vec2D A = createVec2D(    a.getY(),     a.getZ());
-    vec2D B = createVec2D(    b.getY(),     b.getZ());
-    vec2D C = createVec2D(    c.getY(),     c.getZ());
-    vec2D m = createVec2D(point.getY(), point.getZ());
-
-    vec2D AB = vectorise(A, B);
-    vec2D AM = vectorise(A, m);
-    vec2D AC = vectorise(A, C);
-    double dotABAM = dot(AB, AM);
-    double dotABAB = dot(AB, AB);
-    double dotAMAC = dot(AM, AC);
-    double dotACAC = dot(AC, AC);
-    return (0 <= dotABAM && dotABAM <= dotABAB && 0 <= dotAMAC && dotAMAC <= dotACAC);
-}
-
-bool pointInRectangleXZ(Vector a, Vector b, Vector c, Vector point ) {
-    vec2D A = createVec2D(    a.getX(),     a.getZ());
-    vec2D B = createVec2D(    b.getX(),     b.getZ());
-    vec2D C = createVec2D(    c.getX(),     c.getZ());
-    vec2D m = createVec2D(point.getX(), point.getZ());
-
-    vec2D AB = vectorise(A, B);
-    vec2D AM = vectorise(A, m);
-    vec2D AC = vectorise(A, C);
-    double dotABAM = dot(AB, AM);
-    double dotABAB = dot(AB, AB);
-    double dotAMAC = dot(AM, AC);
-    double dotACAC = dot(AC, AC);
-    return (0 <= dotABAM && dotABAM <= dotABAB && 0 <= dotAMAC && dotAMAC <= dotACAC);
-}
-
-//std::string checkIfInsideWall(int i, Vector point, const Box& b) {
-//    switch (i) {
-//        case 0:
-//            //std::cout<<"YZ abcd\n";
-//            if(pointInRectangleYZ( b.a, b.b, b.c, point))
-//                return "0";
-//            else
-//                return ".";
-//        case 1:
-//            ////GOOD
-//            if(pointInRectangleXZ( b.a, b.b, b.e, point))
-//                return "1";
-//            else
-//                return ".";
-//        case 2:
-//            //std::cout<<"YZ efgh\n";
-//            if(pointInRectangleYZ( b.e, b.f, b.g, point))
-//                return "2";
-//            else
-//                return ".";
-//        case 3:
-//            ////GOOD
-//            if(pointInRectangleXZ( b.d, b.g, b.h, point))
-//                return "3";
-//            else
-//                return ".";
-//        case 4:
-//            //std::cout<<"XY aceg\n";
-//            if(pointInRectangleXY( b.c, b.g, b.a, point))
-//                return "4";
-//            else
-//                return ".";
-//        case 5:
-//            //std::cout<<"XY bdfh\n";
-//            if(pointInRectangleXY( b.b, b.d, b.f, point))
-//                return "5";
-//            else
-//                return ".";
-//        default:
-//            return ".";
-//    }
-//}
-
 bool checkIfInsideBox(Vector test, Box b) {
     Vector u = b.a.copy();
     u.sub(b.e);
@@ -269,9 +169,11 @@ bool checkIfInsideBox(Vector test, Box b) {
     double wp1 = w.dot(b.a);
     double wp5 = w.dot(b.c);
 
-    bool first = (up1 >= ux && ux >= up2) || (up1 <= ux && ux <= up2);
-    bool second = (vp1 >= vx && vx >= vp4) || (vp1 <= vx && vx <= vp4);
-    bool third = (wp1 >= wx && wx >= wp5) || (wp1 <= wx && wx <= wp5);
+    double tolerance = 0.001;
+
+    bool first =  (up1 + tolerance >= ux && ux + tolerance >= up2) || (up1 <= ux + tolerance && ux <= up2 + tolerance);
+    bool second = (vp1 + tolerance >= vx && vx + tolerance >= vp4) || (vp1 <= vx + tolerance && vx <= vp4 + tolerance);
+    bool third =  (wp1 + tolerance >= wx && wx + tolerance >= wp5) || (wp1 <= wx + tolerance && wx <= wp5 + tolerance);
 
     if (first && second && third)
         return true;
@@ -291,7 +193,6 @@ bool collidesWithBox(const Box& b, const Line& l) {
             }
         }
     }
-    //std::cout<<"kiedys sie wykonalem";
     return false;
 
 }
@@ -330,10 +231,6 @@ Box rotateBox(Box box, double angle, const Vector& axis) {
     return {a,b,c,d,e,f,g,h,planes};
 }
 
-
-
-
-//std::string detectCollisionBox
 int main() {
     Box box = createBox(Vector(15,15,15), Vector(15,15,-15),
                         Vector(15,-15,15), Vector(15,-15,-15),
@@ -343,17 +240,12 @@ int main() {
 
     Box box2 = rotateBox(box, 45, Vector(0,1,1));
 
-
-
-
     Line lineArr[60][60];
     int y = 30;
     int z = 30;
     for (int i = 0; i < 60; i++) {
         for (int j = 0; j < 60; j++) {
             lineArr[i][j] = createLine(Vector(-1000,0,0), Vector(30,y,z));
-            //std::cout<<"POINT x: "<<lineArr[i][j].point.getX()<<" y: "<<lineArr[i][j].point.getY()<<" z: "<<lineArr[i][j].point.getZ()<<"\n";
-            //std::cout<<"VECTORx: "<<lineArr[i][j].vector.getX()<<" y: "<<lineArr[i][j].vector.getY()<<" z: "<<lineArr[i][j].vector.getZ()<<"\n";
             y--;
         }
         y = 30;
